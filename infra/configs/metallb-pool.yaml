@@ -18,3 +18,7 @@ metadata:
 spec:
   ipAddressPools:
     - k8s-vlan
+  # Allow control-plane nodes (ignore exclude-from-external-load-balancers label)
+  nodeSelectors:
+    - matchLabels:
+        kubernetes.io/os: linux
