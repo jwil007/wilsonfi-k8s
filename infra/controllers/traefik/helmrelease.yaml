@@ -18,7 +18,6 @@ spec:
   install:
     createNamespace: true
 
-  # ---- Minimal safe values: no redirectTo ----
   values:
     deployment:
       replicas: 1
@@ -28,8 +27,11 @@ spec:
 
     ports:
       web:
-        expose: true
+        expose:
+          enabled: true
         port: 80
+
       websecure:
-        expose: true
+        expose:
+          enabled: true
         port: 443
