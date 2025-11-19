@@ -57,3 +57,5 @@ spec:
         level: INFO 
     service:
       type: LoadBalancer
+      annotations:
+        metallb.universe.tf/address-pool: admin-vlan
