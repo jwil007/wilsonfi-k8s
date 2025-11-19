@@ -1,5 +1,5 @@
 ---
-# Kubernetes native VLAN pool (default)
+# Kubernetes native VLAN pool
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
@@ -8,16 +8,6 @@ metadata:
 spec:
   addresses:
     - 10.0.50.200-10.0.50.250
----
-# Admin/Management VLAN pool
-apiVersion: metallb.io/v1beta1
-kind: IPAddressPool
-metadata:
-  name: admin-vlan
-  namespace: metallb-system
-spec:
-  addresses:
-    - 10.0.10.200-10.0.10.250
 ---
 # L2 Advertisement
 apiVersion: metallb.io/v1beta1
