@@ -37,6 +37,11 @@ spec:
     remediation:
       retries: 3
   values:
+    replicaCount: 2
+    webhook:
+      replicaCount: 3
+    cainjector:
+      replicaCount: 2
     crds:
       enabled: true
       keep: true
