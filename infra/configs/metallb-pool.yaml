@@ -22,3 +22,6 @@ spec:
   nodeSelectors:
     - matchLabels:
         kubernetes.io/os: linux
+  # Specify physical network interface for Talos nodes
+  interfaces:
+    - eno1
