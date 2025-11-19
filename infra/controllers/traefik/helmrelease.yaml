@@ -2,36 +2,39 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: traefik
-  namespace: traefik-system
+  namespace: networking
 spec:
-  releaseName: traefik
-  interval: 10m
+  interval: 15m
   chart:
     spec:
       chart: traefik
       version: ">=37.0.0"
       sourceRef:
         kind: HelmRepository
-        name: traefik
+        name: traefik-charts
         namespace: flux-system
 
   install:
     createNamespace: true
 
+  upgrade:
+    remediation:
+      retries: 3
+
   values:
     deployment:
-      replicas: 1
+      replicas: 2
 
-    service:
-      type: LoadBalancer
-
+    # Required for Traefik v37+ (schema changed)
     ports:
       web:
         expose:
           enabled: true
-        port: 80
-
       websecure:
         expose:
           enabled: true
-        port: 443
+
+    service:
+      type: LoadBalancer
+      # Set MetalLB IP later — for now, let MetalLB auto-assign
+      annotations: {}
