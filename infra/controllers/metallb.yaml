@@ -46,3 +46,6 @@ spec:
     speaker:
       # Speaker announces IPs to your network (runs on each node as DaemonSet)
       tolerations: []
+      frr:
+        # Disable FRR/BGP mode, use pure L2 only
+        enabled: false
