@@ -5,37 +5,46 @@ metadata:
   namespace: flux-system
 spec:
   releaseName: traefik
-  interval: 15m
+  interval: 30m
+
   chart:
     spec:
       chart: traefik
-      version: 34.x.x
+      version: 37.3.0
       sourceRef:
         kind: HelmRepository
         name: traefik-charts
         namespace: flux-system
-  install:
-    remediation:
-      retries: 3
-  upgrade:
-    remediation:
-      retries: 3
+
   targetNamespace: traefik-system
+  install:
+    createNamespace: true
+
   values:
-    deployment:
-      replicas: 2
-
-    ingressClass:
-      enabled: true
-      isDefaultClass: true
-
+    # Expose Traefik via MetalLB
     service:
       enabled: true
       type: LoadBalancer
 
+    # Enable ports (web + websecure)
     ports:
       web:
-        redirectTo: websecure
+        expose: true
+        port: 80
+        protocol: TCP
       websecure:
-        tls:
-          enabled: false
+        expose: true
+        port: 443
+        protocol: TCP
+
+    # Make Traefik the default ingress class
+    ingressClass:
+      enabled: true
+      isDefaultClass: true
+
+    # Recommended arguments for CRDs + k8s sources
+    additionalArguments:
+      - "--providers.kubernetescrd"
+      - "--providers.kubernetesingress"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
