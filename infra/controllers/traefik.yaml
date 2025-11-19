@@ -36,7 +36,7 @@ spec:
       retries: 3
   values:
     deployment:
-      replicas: 0  # Temporarily scaled to 0 to force IP reassignment
+      replicas: 2
     affinity:
       podAntiAffinity:
         preferredDuringSchedulingIgnoredDuringExecution:
