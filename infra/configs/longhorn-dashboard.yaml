@@ -1,0 +1,16 @@
+---
+# IngressRoute to expose Longhorn dashboard
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: longhorn-dashboard
+  namespace: longhorn
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`longhorn.wilsonfi.dev`)
+      kind: Rule
+      services:
+        - name: longhorn-frontend
+          port: 80

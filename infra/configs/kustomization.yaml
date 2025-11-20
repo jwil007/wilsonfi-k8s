@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - metallb-pool.yaml
   - traefik-dashboard.yaml
+  - longhorn-dashboard.yaml
