@@ -4,5 +4,5 @@ resources:
   - cert-manager.yaml
   - metallb.yaml
   - traefik.yaml
-  - longhorn.
+  - longhorn.yaml
   - monitoring-stack.yaml
