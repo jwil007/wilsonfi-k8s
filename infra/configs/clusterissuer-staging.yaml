@@ -20,7 +20,7 @@ spec:
       # certificates for any/all domains managed using your previous account,
       # but you will be unable to revoke any certificates generated using that
       # previous account.
-      name: example-issuer-account-key
+      name: letsencrypt-staging-account-key
     # Add a single challenge solver, HTTP01 using nginx
     solvers:
     - dns01:
