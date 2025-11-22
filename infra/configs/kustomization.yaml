@@ -6,3 +6,4 @@ resources:
   - traefik-dashboard.yaml
   - longhorn-dashboard.yaml
   - clusterissuer-staging.yaml
+  - test-cert-staging.yaml
