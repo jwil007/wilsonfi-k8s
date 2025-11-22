@@ -13,3 +13,7 @@ spec:
   dependsOn:
     - name: infra-configs
   wait: true
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
