@@ -1,0 +1,13 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMServiceScrape
+metadata:
+  name: pihole-exporter
+  namespace: pihole
+spec:
+  selector:
+    matchLabels:
+      app: pihiole-exporter
+  endpoints:
+  - port: metrics
+    interval: 10s
+    path: /
