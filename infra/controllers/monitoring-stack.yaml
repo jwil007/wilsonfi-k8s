@@ -47,6 +47,10 @@ spec:
           resources:
             requests:
               storage: 150Gi
+    vmagent:
+      serviceScrapeSelector: {}
+      podScrapeSelector: {}
+      staticScrapeSelector: {}
     grafana:
       enabled: true
       persistence:
