@@ -40,6 +40,13 @@ spec:
     remediation:
       retries: 3
   values:
+    vmsingle:
+      spec:
+        retentionPeriod: "12" #months
+        storage:
+          resources:
+            requests:
+              storage: 150Gi
     grafana:
       enabled: true
       persistence:
