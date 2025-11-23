@@ -1,0 +1,14 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMServiceScrape
+metadata:
+  name: wyebot-exporter
+  namespace: wyebot
+spec:
+  selector:
+    matchLabels:
+      app: wyebot-exporter
+  endpoints:
+  - port: metrics
+    interval: 5m
+    scrapeTimeout: 5m
+    path: /
