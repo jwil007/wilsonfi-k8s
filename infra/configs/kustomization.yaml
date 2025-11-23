@@ -7,3 +7,5 @@ resources:
   - longhorn-dashboard.yaml
   - clusterissuer-staging.yaml
   - clusterissuer-prod.yaml
+  - grafana-ingress.yaml
+  - grafana-ingress.yaml
