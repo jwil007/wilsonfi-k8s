@@ -11,4 +11,5 @@ spec:
     - match: Host(`grafana.wilsonfi.dev`)
       kind: Rule
       services:
-        - name: vmks-grafana
+        - name: victoriametrics-k8s-stack-grafana
+          port: 80
