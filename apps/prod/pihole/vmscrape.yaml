@@ -6,7 +6,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: pihiole-exporter
+      app: pihole-exporter
   endpoints:
   - port: metrics
     interval: 10s
