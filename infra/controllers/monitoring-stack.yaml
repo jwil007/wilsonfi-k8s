@@ -21,7 +21,7 @@ spec:
   interval: 30m
   chart: 
     spec:
-      chart: victoriametrics-k8s-stack
+      chart: victoria-metrics-k8s-stack
       version: ">=0.63.0"
       sourceRef:
         kind: HelmRepository
