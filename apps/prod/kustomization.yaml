@@ -3,4 +3,5 @@ kind: Kustomization
 resources:
   - ../secrets  # Include encrypted secrets
   - wyebot
+  - pihole
   # Add app manifests here as you deploy them
