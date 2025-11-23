@@ -10,4 +10,4 @@ spec:
   endpoints:
   - port: metrics
     interval: 10s
-    path: /
+    path: /metrics
