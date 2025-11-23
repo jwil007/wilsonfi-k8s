@@ -26,7 +26,7 @@ spec:
         - name: PIHOLE_PROTOCOL
           value: "http"
         - name: PIHOLE_HOSTNAME
-          value: "10.0.50.203,10.0.10.22,10.0.10.64"
+          value: "pihole-web,10.0.10.22,10.0.10.64"
         - name: PIHOLE_PORT
           value: "80"
         - name: PIHOLE_PASSWORD
