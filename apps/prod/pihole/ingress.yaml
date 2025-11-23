@@ -25,3 +25,5 @@ spec:
       services:
         - name: pihole-web
           port: 80
+  tls:
+    secretName: pihole-tls-secret
