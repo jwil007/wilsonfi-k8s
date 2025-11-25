@@ -43,6 +43,13 @@ spec:
       type: LoadBalancer
       port: 51820
     
+    # Disable autoscaling - not needed for home VPN
+    autoscaling:
+      enabled: false
+    
+    # Set a fixed replica count
+    replicaCount: 1
+    
     wireguard:
       serverAddress: 10.34.0.1/24
       serverCidr: 10.34.0.0/24
