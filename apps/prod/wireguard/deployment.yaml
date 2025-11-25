@@ -10,26 +10,26 @@ metadata:
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: wireguard
+  name: wg-easy
   namespace: flux-system
 spec:
   interval: 24h
-  url: https://bryopsida.github.io/wireguard-chart
+  url: https://raw.githubusercontent.com/hansehe/wg-easy-helm/master/helm/charts
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: wireguard
+  name: wg-easy
   namespace: wireguard
 spec:
   interval: 30m
   chart: 
     spec:
-      chart: wireguard
+      chart: wg-easy
       version: '>=0.0.0'
       sourceRef:
         kind: HelmRepository
-        name: wireguard
+        name: wg-easy
         namespace: flux-system
       interval: 12h
   install:
@@ -39,33 +39,60 @@ spec:
     remediation:
       retries: 3
   values:
+    # Single replica - no autoscaling
+    replicaCount: 1
+    
+    image:
+      repository: ghcr.io/wg-easy/wg-easy
+      pullPolicy: IfNotPresent
+    
+    # Environment variables for wg-easy
+    env:
+      # UI Configuration
+      PORT: "51821"
+      INSECURE: "false"  # Set to true if not using TLS ingress
+      WG_DEFAULT_DNS=10.0.10.22, 10.0.10.40, 10.0.10.64
+      WG_ALLOWED_IPS=10.0.10.0/24, 10,0.50.0/24  # Split-tunnel
+      
+      # Unattended setup (optional - comment out to use web UI setup)
+      # INIT_ENABLED: "true"
+      # INIT_USERNAME: "admin"
+      # INIT_PASSWORD: "your-secure-password"  # Use SOPS to encrypt this
+      # INIT_HOST: "vpn.example.com"
+      # INIT_PORT: "51820"
+      # INIT_DNS: "10.0.50.203, 10.0.10.22, 10.0.10.64"
+      # INIT_IPV4_CIDR: "10.34.0.0/24"
+      # INIT_IPV6_CIDR: "fd42:42:42::/64"
+      # INIT_ALLOWED_IPS: "10.0.10.0/24, 10.0.50.0/24"  # Split-tunnel
+    
+    # WireGuard VPN service (UDP)
     service:
       type: LoadBalancer
       port: 51820
+      annotations: {}
     
-    # Disable autoscaling - not needed for home VPN
-    autoscaling:
-      enabled: false
+    # Persistent storage for WireGuard configs
+    volume:
+      enabled: true
+      size: 100mi
+      className: ""  # Use default storage class
+      annotations:
+        helm.sh/resource-policy: "keep"
     
-    # Set a fixed replica count
-    replicaCount: 1
+    # Security context - required for WireGuard
+    securityContext:
+      privileged: true
+      allowPrivilegeEscalation: true
+      capabilities:
+        add:
+          - NET_ADMIN
+          - SYS_MODULE
     
-    wireguard:
-      serverAddress: 10.34.0.1/24
-      serverCidr: 10.34.0.0/24
-      allowWan: true  # true because we're doing split-tunnel (not routing all traffic)
-      
-      # DNS servers in your priority order (WireGuard passes all to client OS)
-      # Client configs will get: DNS = 10.0.50.203, 10.0.10.22, 10.0.10.64
-      interfaceOpts:
-        DNS: "10.0.50.203, 10.0.10.22, 10.0.10.64"
-      
-      # Example clients - generate keys and add them here, or use the WireGuard UI
-      # For split-tunnel to your local networks, set AllowedIPs to those subnets only
-      clients: []
-        # - FriendlyName: my-phone
-        #   PublicKey: <client-public-key>
-        #   AllowedIPs: 10.0.10.0/24, 10.0.50.0/24  # Split-tunnel: only route these subnets
-    
-
-
+    # Resource limits
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
