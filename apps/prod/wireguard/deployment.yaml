@@ -58,6 +58,12 @@ spec:
       port: 51820
       annotations: {}
     
+    # Persistent storage
+    volume:
+      enabled: true
+      size: 100Mi
+      annotations:
+        helm.sh/resource-policy: "keep"
     
     # Resource limits
     resources:
