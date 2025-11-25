@@ -56,11 +56,5 @@ spec:
         #   PublicKey: <client-public-key>
         #   AllowedIPs: 10.0.10.0/24, 10.0.50.0/24  # Split-tunnel: only route these subnets
     
-    # Enable metrics collection
-    metrics:
-      enabled: true
-      serviceMonitor:
-        enabled: false  # We'll use VMServiceScrape instead
-      dashboard:
-        enabled: false
+
 
