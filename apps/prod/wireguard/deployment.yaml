@@ -37,7 +37,6 @@ spec:
   values:
     service:
       type: LoadBalancer
-      loadBalancerIP: 10.0.50.204  # Pick an IP from your MetalLB pool
       port: 51820
     
     wireguard:
@@ -62,4 +61,6 @@ spec:
       enabled: true
       serviceMonitor:
         enabled: true
+      dashboard:
+        enabled: false  # Disable auto-created Grafana dashboard - import manually instead
 
