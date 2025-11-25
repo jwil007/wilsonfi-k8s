@@ -4,5 +4,5 @@ resources:
   - wyebot
   - pihole
   - iperf3
-  - wireguard
+  - tailscale
   # Add app manifests here as you deploy them
