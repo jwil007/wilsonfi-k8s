@@ -39,20 +39,48 @@ spec:
     remediation:
       retries: 3
   values:
+    # Single replica
+    replicaCount: 1
     
     # Environment variables for wg-easy
     env:
       PORT: "51821"
-      INSECURE: "false"  # Set to true if not using TLS ingress
-      WG_DEFAULT_DNS=10.0.10.22, 10.0.10.40, 10.0.10.64
-      WG_ALLOWED_IPS=10.0.10.0/24, 10,0.50.0/24  # Split-tunnel
-
-    # WireGuard VPN service (UDP)
+      INSECURE: "true"  # Set to true since we'll use Traefik for TLS
+      # Uncomment for unattended setup:
+      # INIT_ENABLED: "true"
+      # INIT_USERNAME: "admin"
+      # INIT_PASSWORD: "your-password-here"
+      # INIT_HOST: "vpn.yourdomain.com"
+      # INIT_PORT: "51820"
+      # INIT_DNS: "10.0.50.203,10.0.10.22,10.0.10.64"
+      # INIT_IPV4_CIDR: "10.34.0.0/24"
+      # INIT_IPV6_CIDR: "fd42:42:42::/64"
+      # INIT_ALLOWED_IPS: "10.0.10.0/24,10.0.50.0/24"  # Split-tunnel
+    
+    # WireGuard VPN service (UDP) - LoadBalancer
     service:
       type: LoadBalancer
       port: 51820
       annotations: {}
     
+    # Web UI will be exposed via Ingress (ClusterIP by default in chart)
+    # The chart creates a separate service for the UI on port 51821
+    
+    # Persistent storage
+    volume:
+      enabled: true
+      size: 1Gi
+      annotations:
+        helm.sh/resource-policy: "keep"
+    
+    # Security context
+    securityContext:
+      privileged: true
+      allowPrivilegeEscalation: true
+      capabilities:
+        add:
+          - NET_ADMIN
+          - SYS_MODULE
     
     # Resource limits
     resources:
