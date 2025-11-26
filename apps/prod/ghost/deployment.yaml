@@ -38,7 +38,7 @@ spec:
   values:
     image:
       registry: docker.io
-      repository: bitnami/ghost
+      repository: ghost
       tag: "latest"
     existingSecret: ghost-login
     service:
