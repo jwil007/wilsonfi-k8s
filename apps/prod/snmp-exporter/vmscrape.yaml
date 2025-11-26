@@ -7,8 +7,8 @@ spec:
   jobName: snmp
   targetEndpoints:
     - targets:
-        - "10.0.10.1"
-        - "10.0.10.10"
+        # - "10.0.10.1"  # Disabled - SNMP timeout from cluster
+        - "10.0.10.10"  # HP J9773A 2530-24G-PoEP Switch (SW01)
       path: /snmp
       labels:
         job: snmp

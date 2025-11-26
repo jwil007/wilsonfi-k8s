@@ -34,8 +34,4 @@ spec:
   upgrade:
     remediation:
       retries: 3
-  values:
-    # Enable host network so the exporter can reach local network devices (10.0.10.0/24)
-    hostNetwork: true
-    dnsPolicy: ClusterFirstWithHostNet
 

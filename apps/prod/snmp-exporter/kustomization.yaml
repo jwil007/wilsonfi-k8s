@@ -4,3 +4,15 @@ resources:
   - deployment.yaml
   - vmscrape.yaml
 
+patches:
+  - target:
+      kind: Deployment
+      name: prometheus-snmp-exporter
+    patch: |-
+      - op: add
+        path: /spec/template/spec/hostNetwork
+        value: true
+      - op: add
+        path: /spec/template/spec/dnsPolicy
+        value: ClusterFirstWithHostNet
+
