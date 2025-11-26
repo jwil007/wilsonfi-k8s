@@ -5,5 +5,4 @@ resources:
   - pihole
   - iperf3
   - tailscale
-  - ghost
   # Add app manifests here as you deploy them
