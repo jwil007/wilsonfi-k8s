@@ -36,7 +36,11 @@ spec:
       retries: 3
   values:
     # Enable host network so the exporter can reach local network devices
-    hostNetwork: true
-    # Use dnsPolicy: ClusterFirstWithHostNet to maintain DNS resolution
-    dnsPolicy: ClusterFirstWithHostNet
+    # This allows the pod to access devices on the node's network (10.0.10.0/24)
+    deployment:
+      spec:
+        template:
+          spec:
+            hostNetwork: true
+            dnsPolicy: ClusterFirstWithHostNet
 
