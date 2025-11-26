@@ -35,12 +35,7 @@ spec:
     remediation:
       retries: 3
   values:
-    # Enable host network so the exporter can reach local network devices
-    # This allows the pod to access devices on the node's network (10.0.10.0/24)
-    deployment:
-      spec:
-        template:
-          spec:
-            hostNetwork: true
-            dnsPolicy: ClusterFirstWithHostNet
+    # Enable host network so the exporter can reach local network devices (10.0.10.0/24)
+    hostNetwork: true
+    dnsPolicy: ClusterFirstWithHostNet
 
