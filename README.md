@@ -1,28 +1,33 @@
 # wilsonfi-k8s
 
-GitOps repository for managing the wilsonfi.dev Kubernetes cluster using FluxCD.
+Homelab k8s cluster. Using GitOps with fluxCD to manage configuration and deployment.
 
 ## Cluster Info
 
-- **Platform**: Talos Linux
-- **Domain**: wilsonfi.dev
+Three node cluster installed on bare-metal. Using HP G4 MP9 mini PCs purchased for a song from eBay. 32GB ram per node, i5 8500T.
+
+Each node is running the control plane as well as worker jobs. This is a pragmatic design for a homelab, giving HA for the control plane, but not requiring seperate worker nodes.
+
+After deciding which k8s distro to go with (k3s, kubeadm, Talos), I ended up using Talos. Unlike other distros, Talos is a full Linux image - it is not run on top of an existing OS. It is a specialized Linux distro that does ONE thing, which is run k8s. No shell, no SSH. Only an API interfaced with through talosctl. At first this was strange, but it's appealing to abstract away with Linux OS itself when using k8s. K8s is complicated enough on it's own, so it's nice to know I can't break something on the node's OS. 
+
+- **K8s Distro**: Talos Linux
 - **GitOps**: FluxCD
 - **Secret Management**: SOPS with age encryption
+- **Storage**: Longhorn (In cluster storage, dedicated NVME drives for use by Longhorn)
+- **Monitoring Stack**: Victoria Metrics with Grafana (https://docs.victoriametrics.com/helm/victoria-metrics-k8s-stack/)
+
 
 ## Repository Structure
 
 ```
 .
 ├── apps/
-│   ├── base/           # Base configurations for applications
 │   └── prod/           # Production application deployments
 │       └── <app>/      # Each app in its own folder with deployment, secrets, and monitoring
 ├── clusters/
-│   └── wilsonfi-prod/  # Cluster-specific Flux configuration
+│   └── wilsonfi-prod/  # Cluster-specific Flux configuration (right now I only have a single cluster)
 ├── infra/
-│   ├── configs/        # Infrastructure configurations (ingress routes, issuers, etc.)
-│   ├── controllers/    # Infrastructure controllers (cert-manager, traefik, etc.)
-│   └── secrets/        # Encrypted infrastructure secrets
+│   └── <component>/          # Each component of the infra has it's own dir, containing deployment yamls, secrets, ingress config, etc.
 ```
 
 ## Flux Reconcile Cheat Sheet
@@ -126,74 +131,6 @@ git commit -m "Add myapp secret"
 git push
 ```
 
-## VictoriaMetrics Monitoring
-
-### Accessing Grafana
-
-- URL: http://grafana.wilsonfi.dev
-- Username: `admin`
-- Get password: `kubectl get secret -n monitoring victoriametrics-k8s-stack-grafana -o jsonpath="{.data.admin-password}" | base64 --decode`
-
-### Adding Custom Scrape Targets
-
-Create a `VMServiceScrape` in your app folder:
-
-```yaml
-apiVersion: operator.victoriametrics.com/v1beta1
-kind: VMServiceScrape
-metadata:
-  name: myapp-metrics
-  namespace: myapp
-spec:
-  selector:
-    matchLabels:
-      app: myapp
-  endpoints:
-  - port: metrics
-    interval: 30s
-    path: /metrics
-```
-
-VMAgent will automatically discover it (selectors are set to `{}`).
-
-## Deploying New Applications
-
-### Best Practice Structure
-
-Each application should have its own folder under `apps/prod/<appname>/`:
-
-```
-apps/prod/myapp/
-├── kustomization.yaml          # Lists all resources
-├── myapp-deployment.yaml       # Namespace, Deployment, Service
-├── myapp-secret.yaml           # SOPS-encrypted secrets
-└── vmscrape.yaml               # Optional: metrics scraping config
-```
-
-### Example Deployment Workflow
-
-```bash
-# 1. Create app folder
-mkdir -p apps/prod/myapp
-
-# 2. Create deployment YAML with namespace, deployment, service
-
-# 3. Create and encrypt secrets
-sops -e -i apps/prod/myapp/myapp-secret.yaml
-
-# 4. Create kustomization.yaml listing all resources
-
-# 5. Add app folder to apps/prod/kustomization.yaml
-
-# 6. Commit and push
-git add apps/prod/myapp/
-git commit -m "Add myapp deployment"
-git push
-
-# 7. Force reconcile
-flux reconcile kustomization apps --with-source
-```
-
 ## Useful kubectl Commands
 
 ```bash
@@ -223,6 +160,7 @@ kubectl port-forward -n <namespace> svc/<service-name> 8080:80
 - **MetalLB**: LoadBalancer implementation
 - **VictoriaMetrics**: Metrics collection and storage (12-month retention, 150Gi)
 - **Grafana**: Metrics visualization
+- **Flux Capacitor UI**: Handy UI to check Flux status
 
 ## Troubleshooting
 
