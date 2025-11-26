@@ -6,14 +6,15 @@ metadata:
 spec:
   jobName: snmp
   targetEndpoints:
-  - targets:
-    - "10.0.10.1"
-    - "10.0.10.10"
-    params:
-      module: [if_mib]
-    labels:
-      job: snmp
-    relabelConfigs:
+    - targets:
+        - "10.0.10.1"
+        - "10.0.10.10"
+      path: /snmp
+      labels:
+        job: snmp
+      params:
+        module: [if_mib]
+      relabelConfigs:
     - sourceLabels: [__address__]
       targetLabel: __param_target
     - sourceLabels: [__param_target]
