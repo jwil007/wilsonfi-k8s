@@ -1,5 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: capacitor-tls
+  namespace: flux-system
+spec:
+  secretName: capacitor-tls-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - capacitor.wilsonfi.dev
 ---
-# IngressRoute to expose Longhorn dashboard
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
@@ -7,10 +18,12 @@ metadata:
   namespace: flux-system
 spec:
   entryPoints:
-    - web
+    - websecure
   routes:
     - match: Host(`capacitor.wilsonfi.dev`)
       kind: Rule
       services:
         - name: capacitor
           port: 9000
+  tls:
+    secretName: capacitor-tls-secret
