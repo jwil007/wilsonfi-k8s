@@ -6,3 +6,4 @@ resources:
   - traefik
   - longhorn
   - victoria-metrics
+  - flux-ui
