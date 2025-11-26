@@ -47,10 +47,27 @@ spec:
           resources:
             requests:
               storage: 150Gi
+        # Increase resources - was hitting limits
+        resources:
+          requests:
+            cpu: 500m
+            memory: 2Gi
+          limits:
+            cpu: 2000m
+            memory: 4Gi
     vmagent:
       serviceScrapeSelector: {}
       podScrapeSelector: {}
       staticScrapeSelector: {}
+      # Add resources - was CPU throttling with no limits set
+      spec:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
     grafana:
       enabled: true
       persistence:
