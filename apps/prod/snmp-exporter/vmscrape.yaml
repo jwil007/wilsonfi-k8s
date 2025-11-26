@@ -1,0 +1,22 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMStaticScrape
+metadata:
+  name: snmp-devices
+  namespace: snmp-exporter
+spec:
+  jobName: snmp
+  targetEndpoints:
+  - targets:
+    - "10.0.10.1"
+    - "10.0.10.10"
+    params:
+      module: [if_mib]
+    labels:
+      job: snmp
+    relabelConfigs:
+    - sourceLabels: [__address__]
+      targetLabel: __param_target
+    - sourceLabels: [__param_target]
+      targetLabel: instance
+    - targetLabel: __address__
+      replacement: "prometheus-snmp-exporter.snmp-exporter.svc:9116"

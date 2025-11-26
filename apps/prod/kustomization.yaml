@@ -5,4 +5,5 @@ resources:
   - pihole
   - iperf3
   - tailscale
+  - snmp-exporter
   # Add app manifests here as you deploy them
