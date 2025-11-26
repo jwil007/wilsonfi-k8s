@@ -27,7 +27,7 @@ After deciding which k8s distro to go with (k3s, kubeadm, Talos), I ended up usi
 ├── clusters/
 │   └── wilsonfi-prod/  # Cluster-specific Flux configuration (right now I only have a single cluster)
 ├── infra/
-│   └── <component>/          # Each component of the infra has it's own dir, containing deployment yamls, secrets, ingress config, etc.
+│   └── <component>/    # Each component of the infra has it's own folder containing relevant yamls
 ```
 
 ## Flux Reconcile Cheat Sheet
