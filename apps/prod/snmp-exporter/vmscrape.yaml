@@ -15,9 +15,9 @@ spec:
       params:
         module: [if_mib]
       relabelConfigs:
-    - sourceLabels: [__address__]
-      targetLabel: __param_target
-    - sourceLabels: [__param_target]
-      targetLabel: instance
-    - targetLabel: __address__
-      replacement: "prometheus-snmp-exporter.snmp-exporter.svc:9116"
+        - sourceLabels: [__address__]
+          targetLabel: __param_target
+        - sourceLabels: [__param_target]
+          targetLabel: instance
+        - targetLabel: __address__
+          replacement: "prometheus-snmp-exporter.snmp-exporter.svc:9116"
