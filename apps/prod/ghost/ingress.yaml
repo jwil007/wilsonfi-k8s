@@ -1,0 +1,14 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ghost-ingress
+  namespace: ghost
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`blog.wilsonfi.dev`)
+      kind: Rule
+      services:
+        - name: ghost.local
+          port: 80
