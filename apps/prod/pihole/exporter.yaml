@@ -34,6 +34,14 @@ spec:
             secretKeyRef:
               name: pihole-password
               key: password
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 9617
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
         resources:
           requests:
             cpu: 100m
