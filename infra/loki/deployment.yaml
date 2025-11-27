@@ -54,6 +54,8 @@ spec:
         # Use http://EXTERNAL-IP:3100/loki/api/v1/push for external logs
     
     loki:
+      # Disable auth for internal Grafana access
+      auth_enabled: false
       # Use filesystem storage instead of S3/MinIO
       storage:
         type: filesystem
