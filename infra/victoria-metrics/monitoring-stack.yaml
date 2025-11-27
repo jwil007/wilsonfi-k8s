@@ -50,11 +50,15 @@ spec:
         # Increase resources - was hitting limits
         resources:
           requests:
-            cpu: 500m
-            memory: 2Gi
+            cpu: 300m
+            memory: 1Gi
           limits:
-            cpu: 2000m
+            cpu: 1500m
             memory: 4Gi
+        # Enable Loki log collection
+        podMetadata:
+          labels:
+            logging: "true"
     vmagent:
       serviceScrapeSelector: {}
       podScrapeSelector: {}
@@ -68,6 +72,10 @@ spec:
           limits:
             cpu: 1000m
             memory: 1Gi
+        # Enable Loki log collection
+        podMetadata:
+          labels:
+            logging: "true"
     grafana:
       enabled: true
       persistence:
