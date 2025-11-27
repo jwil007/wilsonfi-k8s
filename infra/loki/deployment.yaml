@@ -1,0 +1,111 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  interval: 24h
+  url: https://grafana.github.io/helm-charts
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: loki
+  namespace: monitoring
+spec:
+  interval: 30m
+  chart: 
+    spec:
+      chart: loki
+      version: '>=6.0.0 <7.0.0'
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+        namespace: monitoring
+      interval: 12h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    # Monolithic deployment with filesystem storage
+    deploymentMode: SingleBinary
+    
+    singleBinary:
+      replicas: 3
+      persistence:
+        enabled: true
+        size: 50Gi
+        storageClass: ""  # Use default (Longhorn)
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 1000m
+          memory: 1Gi
+      service:
+        type: LoadBalancer
+        port: 3100
+        # MetalLB will assign from 10.0.50.200-220 pool
+        # Use http://EXTERNAL-IP:3100/loki/api/v1/push for external logs
+    
+    loki:
+      # Use filesystem storage instead of S3/MinIO
+      storage:
+        type: filesystem
+      commonConfig:
+        replication_factor: 3
+      schemaConfig:
+        configs:
+          - from: "2024-04-01"
+            store: tsdb
+            object_store: filesystem  # Changed from s3
+            schema: v13
+            index:
+              prefix: loki_index_
+              period: 24h
+      pattern_ingester:
+        enabled: true
+      limits_config:
+        allow_structured_metadata: true
+        volume_enabled: true
+        retention_period: 744h  # 31 days
+      ruler:
+        enable_api: true
+
+    minio:
+      enabled: false
+
+    # Zero out replica counts of other deployment modes
+    backend:
+      replicas: 0
+    read:
+      replicas: 0
+    write:
+      replicas: 0
+    ingester:
+      replicas: 0
+    querier:
+      replicas: 0
+    queryFrontend:
+      replicas: 0
+    queryScheduler:
+      replicas: 0
+    distributor:
+      replicas: 0
+    compactor:
+      replicas: 0
+    indexGateway:
+      replicas: 0
+    bloomCompactor:
+      replicas: 0
+    bloomGateway:
+      replicas: 0
+    
+    # Gateway not needed for monolithic mode
+    gateway:
+      enabled: false
