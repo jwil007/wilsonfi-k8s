@@ -35,7 +35,7 @@ spec:
     deploymentMode: SingleBinary
     
     singleBinary:
-      replicas: 3
+      replicas: 1  # Filesystem storage only supports 1 replica
       persistence:
         enabled: true
         size: 50Gi
@@ -58,7 +58,7 @@ spec:
       storage:
         type: filesystem
       commonConfig:
-        replication_factor: 3
+        replication_factor: 1  # Must be 1 with single replica
       schemaConfig:
         configs:
           - from: "2024-04-01"
