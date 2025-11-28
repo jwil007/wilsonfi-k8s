@@ -8,3 +8,4 @@ resources:
   - victoria-metrics
   - loki
   - flux-ui
+  - alloy
