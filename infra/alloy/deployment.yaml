@@ -31,16 +31,13 @@ spec:
     alloy:
       configMap:
         content: |-
-          // Write your Alloy config here:
-          logging {
-            level = "info"
-            format = "logfmt"
-            loki.write "default" {
-              endpoint {
-                url = "http://loki:3100/loki/api/v1/push"
-              }
+
+          loki.write "default {
+            endpoint {
+              url = "http://loki:3100/loki/api/v1/push"
             }
           }
+   
           // local.file_match discovers files on the local filesystem using glob patterns and the doublestar library. It returns an array of file paths.
           local.file_match "node_logs" {
             path_targets = [{
