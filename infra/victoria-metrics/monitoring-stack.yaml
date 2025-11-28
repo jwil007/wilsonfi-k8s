@@ -74,3 +74,9 @@ spec:
         enabled: true
     nameOverride: vmks
 
+    #disable scrape jobs for kube scheduler and kube controller manager
+    kubeScheduler:
+      enabled: false
+    kubeControllerManager:
+      enabled: false
+
