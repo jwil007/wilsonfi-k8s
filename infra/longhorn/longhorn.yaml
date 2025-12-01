@@ -43,3 +43,12 @@ spec:
   values:
     defaultSettings:
       defaultDataPath: /var/mnt/longhorn
+      removeSnapshotsDuringFilesystemTrim: enabled
+    persistence:
+      defaultClass: true
+      defaultClassReplicaCount: 3
+      reclaimPolicy: Delete
+      defaultFsType: ext4
+      defaultMkfsParams: ""
+      defaultDataLocality: disabled
+      defaultUnmapMarkSnapChainRemoved: enabled
