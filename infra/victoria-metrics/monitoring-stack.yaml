@@ -79,4 +79,6 @@ spec:
       enabled: false
     kubeControllerManager:
       enabled: false
+    kubeEtcd:
+      enabled: false
 
