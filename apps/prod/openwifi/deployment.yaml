@@ -34,69 +34,153 @@ spec:
   upgrade:
     remediation:
       retries: 3
+  valuesFrom:
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: websocket-cert.pem
+      targetPath: owgw.certs.websocket-cert\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: websocket-key.pem
+      targetPath: owgw.certs.websocket-key\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: restapi-cert.pem
+      targetPath: owgw.certs.restapi-cert\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: restapi-key.pem
+      targetPath: owgw.certs.restapi-key\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: restapi-ca.pem
+      targetPath: owgw.certs.restapi-ca\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: issuer.pem
+      targetPath: owgw.certs.issuer\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: root.pem
+      targetPath: owgw.certs.root\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: clientcas.pem
+      targetPath: owgw.certs.clientcas\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: restapi-cert.pem
+      targetPath: owsec.certs.restapi-cert\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: restapi-key.pem
+      targetPath: owsec.certs.restapi-key\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: restapi-ca.pem
+      targetPath: owsec.certs.restapi-ca\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: restapi-cert.pem
+      targetPath: owfms.certs.restapi-cert\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: restapi-key.pem
+      targetPath: owfms.certs.restapi-key\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: restapi-ca.pem
+      targetPath: owfms.certs.restapi-ca\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: restapi-cert.pem
+      targetPath: owprov.certs.restapi-cert\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: restapi-key.pem
+      targetPath: owprov.certs.restapi-key\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: restapi-ca.pem
+      targetPath: owprov.certs.restapi-ca\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: restapi-cert.pem
+      targetPath: owanalytics.certs.restapi-cert\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: restapi-key.pem
+      targetPath: owanalytics.certs.restapi-key\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: restapi-ca.pem
+      targetPath: owanalytics.certs.restapi-ca\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: restapi-cert.pem
+      targetPath: owsub.certs.restapi-cert\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: restapi-key.pem
+      targetPath: owsub.certs.restapi-key\.pem
+    - kind: Secret
+      name: openwifi-certs
+      valuesKey: restapi-ca.pem
+      targetPath: owsub.certs.restapi-ca\.pem
   values:
     # Disable Bitnami Kafka - use existing Strimzi cluster
     kafka:
       enabled: false
     
-    # Disable HAProxy - use Traefik
-    haproxy:
-      enabled: false
+    # Enable cert-manager for private REST API endpoints
+    restapiCerts:
+      enabled: true
+      clusterDomain: cluster.local
+      services:
+        - owgw
+        - owsec
+        - owfms
+        - owprov
+        - owanalytics
+        - owsub
     
-    # Disable PostgreSQL - use SQLite default
-    postgresql:
+    # Disable HAProxy - use Traefik/MetalLB
+    haproxy:
       enabled: false
     
     # Configure all services to use external Kafka
     owgw:
       configProperties:
-        "openwifi.kafka.enable": "true"
-        "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
-        "openwifi.security.restapi.disable": "true"
-        "openwifi.system.uri.private": "http://owsec-owsec:17002"
+        openwifi.kafka.enable: "true"
+        openwifi.kafka.brokerlist: "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
       # Expose OWGW websocket for AP connections via MetalLB
-      services:
-        owgw:
-          type: LoadBalancer
-          annotations:
-            metallb.universe.tf/allow-shared-ip: "openwifi"
-          ports:
-            websocket:
-              servicePort: 15002
-              targetPort: 15002
-              protocol: TCP
+      service:
+        type: LoadBalancer
+        annotations:
+          metallb.universe.tf/allow-shared-ip: "openwifi"
     
     owsec:
       configProperties:
-        "openwifi.kafka.enable": "true"
-        "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
-        "openwifi.security.restapi.disable": "true"
-        "openwifi.system.uri.private": "http://owsec-owsec:17001"
+        openwifi.kafka.enable: "true"
+        openwifi.kafka.brokerlist: "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
     
     owfms:
       configProperties:
-        "openwifi.kafka.enable": "true"
-        "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
-        "openwifi.security.restapi.disable": "true"
-        "openwifi.system.uri.private": "http://owsec-owsec:17004"
+        openwifi.kafka.enable: "true"
+        openwifi.kafka.brokerlist: "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
     
     owprov:
       configProperties:
-        "openwifi.kafka.enable": "true"
-        "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
-        "openwifi.security.restapi.disable": "true"
-        "openwifi.system.uri.private": "http://owsec-owsec:17005"
+        openwifi.kafka.enable: "true"
+        openwifi.kafka.brokerlist: "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
     
     owsub:
       configProperties:
-        "openwifi.kafka.enable": "true"
-        "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
-        "openwifi.security.restapi.disable": "true"
-        "openwifi.system.uri.private": "http://owsec-owsec:17006"
+        openwifi.kafka.enable: "true"
+        openwifi.kafka.brokerlist: "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
     
     owanalytics:
+      enabled: true
       configProperties:
-        "openwifi.kafka.enable": "true"
-        "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
-        "openwifi.security.restapi.disable": "true"
-        "openwifi.system.uri.private": "http://owsec-owsec:17009"
+        openwifi.kafka.enable: "true"
+        openwifi.kafka.brokerlist: "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
