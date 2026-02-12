@@ -53,6 +53,7 @@ spec:
         "openwifi.kafka.enable": "true"
         "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
         "openwifi.security.restapi.disable": "true"
+        "openwifi.system.uri.private": "http://owsec-owsec:17002"
       # Expose OWGW websocket for AP connections via MetalLB
       services:
         owgw:
@@ -70,27 +71,32 @@ spec:
         "openwifi.kafka.enable": "true"
         "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
         "openwifi.security.restapi.disable": "true"
+        "openwifi.system.uri.private": "http://owsec-owsec:17001"
     
     owfms:
       configProperties:
         "openwifi.kafka.enable": "true"
         "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
         "openwifi.security.restapi.disable": "true"
+        "openwifi.system.uri.private": "http://owsec-owsec:17004"
     
     owprov:
       configProperties:
         "openwifi.kafka.enable": "true"
         "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
         "openwifi.security.restapi.disable": "true"
+        "openwifi.system.uri.private": "http://owsec-owsec:17005"
     
     owsub:
       configProperties:
         "openwifi.kafka.enable": "true"
         "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
         "openwifi.security.restapi.disable": "true"
+        "openwifi.system.uri.private": "http://owsec-owsec:17006"
     
     owanalytics:
       configProperties:
         "openwifi.kafka.enable": "true"
         "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
         "openwifi.security.restapi.disable": "true"
+        "openwifi.system.uri.private": "http://owsec-owsec:17009"
