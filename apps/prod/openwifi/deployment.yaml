@@ -154,10 +154,11 @@ spec:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
       # Expose OWGW websocket for AP connections via MetalLB
-      service:
-        type: LoadBalancer
-        annotations:
-          metallb.universe.tf/allow-shared-ip: "openwifi"
+      services:
+        owgw:
+          type: LoadBalancer
+          annotations:
+            metallb.universe.tf/allow-shared-ip: "openwifi"
     
     owsec:
       configProperties:
