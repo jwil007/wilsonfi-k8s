@@ -9,4 +9,3 @@ resources:
   - loki
   - flux-ui
   - alloy
-  - kafka

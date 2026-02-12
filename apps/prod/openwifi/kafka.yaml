@@ -1,0 +1,114 @@
+---
+# Standalone Kafka 3.6 for OpenWiFi (via Confluent cp-kafka 7.6)
+# OpenWiFi services use librdkafka 1.6.0 which is incompatible with Kafka 4.x
+# Single-node KRaft mode (no ZooKeeper needed)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kafka-data
+  namespace: openwifi
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka
+  namespace: openwifi
+  labels:
+    app: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: kafka
+    spec:
+      containers:
+        - name: kafka
+          image: confluentinc/cp-kafka:7.6.9
+          ports:
+            - containerPort: 9092
+              name: plaintext
+          env:
+            # KRaft settings
+            - name: KAFKA_NODE_ID
+              value: "1"
+            - name: KAFKA_PROCESS_ROLES
+              value: "broker,controller"
+            - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+              value: "1@localhost:9093"
+            - name: KAFKA_CONTROLLER_LISTENER_NAMES
+              value: "CONTROLLER"
+            - name: CLUSTER_ID
+              value: "LH7e0SykRZm88hEqC6JbSw"
+            # Listener settings
+            - name: KAFKA_LISTENERS
+              value: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093"
+            - name: KAFKA_ADVERTISED_LISTENERS
+              value: "PLAINTEXT://kafka.openwifi.svc.cluster.local:9092"
+            - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+              value: "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
+            - name: KAFKA_INTER_BROKER_LISTENER_NAME
+              value: "PLAINTEXT"
+            # Single-node cluster settings
+            - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+              value: "1"
+            - name: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR
+              value: "1"
+            - name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR
+              value: "1"
+            - name: KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS
+              value: "0"
+            # Log settings
+            - name: KAFKA_LOG_DIRS
+              value: "/var/lib/kafka/data"
+          volumeMounts:
+            - name: kafka-data
+              mountPath: /var/lib/kafka/data
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+          readinessProbe:
+            tcpSocket:
+              port: 9092
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 9092
+            initialDelaySeconds: 60
+            periodSeconds: 20
+      volumes:
+        - name: kafka-data
+          persistentVolumeClaim:
+            claimName: kafka-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+  namespace: openwifi
+  labels:
+    app: kafka
+spec:
+  selector:
+    app: kafka
+  ports:
+    - port: 9092
+      targetPort: 9092
+      name: plaintext
+  type: ClusterIP
