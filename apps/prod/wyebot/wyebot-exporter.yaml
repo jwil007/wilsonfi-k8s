@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: wyebot-exporter
-        image: wyebotexporter/prometheus:latest
+        image: wyebotexporter/prometheus:0.1.6
         ports:
         - containerPort: 8014
           name: metrics
