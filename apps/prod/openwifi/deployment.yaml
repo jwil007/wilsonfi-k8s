@@ -153,6 +153,8 @@ spec:
       configProperties:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owgw"
+        openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
       # Expose OWGW websocket for AP connections via MetalLB
       services:
         owgw:
@@ -164,27 +166,37 @@ spec:
       configProperties:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev"
+        openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
     
     owfms:
       configProperties:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owfms"
+        openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
     
     owprov:
       configProperties:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owprov"
+        openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
     
     owsub:
       configProperties:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owsub"
+        openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
     
     owanalytics:
       enabled: true
       configProperties:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owanalytics"
+        openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
     
     # Configure Web UIs to use correct owsec endpoint
     owgwui:
