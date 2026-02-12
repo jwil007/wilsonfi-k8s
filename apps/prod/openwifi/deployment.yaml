@@ -185,3 +185,12 @@ spec:
       configProperties:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+    
+    # Configure Web UIs to use correct owsec endpoint
+    owgwui:
+      public_env_variables:
+        REACT_APP_UCENTRALSEC_URL: "https://openwifi.wilsonfi.dev"
+    
+    owprovui:
+      public_env_variables:
+        REACT_APP_UCENTRALSEC_URL: "https://openwifi.wilsonfi.dev"

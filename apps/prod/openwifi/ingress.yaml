@@ -44,6 +44,23 @@ spec:
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
+  name: openwifi-sec-api
+  namespace: openwifi
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`openwifi.wilsonfi.dev`) && PathPrefix(`/api/v1`)
+      kind: Rule
+      services:
+        - name: owsec-owsec
+          port: 16001
+  tls:
+    secretName: openwifi-gw-tls-secret
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
   name: openwifi-prov-ui
   namespace: openwifi
 spec:
