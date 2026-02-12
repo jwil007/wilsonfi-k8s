@@ -6,4 +6,5 @@ resources:
   - iperf3
   - tailscale
   - snmp-exporter
+  - openwifi
   # Add app manifests here as you deploy them
