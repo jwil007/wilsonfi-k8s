@@ -36,7 +36,7 @@ spec:
     - match: Host(`openwifi.wilsonfi.dev`)
       kind: Rule
       services:
-        - name: owgwui
+        - name: owgwui-owgwui
           port: 80
   tls:
     secretName: openwifi-gw-tls-secret
@@ -53,7 +53,7 @@ spec:
     - match: Host(`openwifi-prov.wilsonfi.dev`)
       kind: Rule
       services:
-        - name: owprovui
+        - name: owprovui-owprovui
           port: 80
   tls:
     secretName: openwifi-prov-tls-secret
