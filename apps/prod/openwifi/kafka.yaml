@@ -34,6 +34,8 @@ spec:
         app: kafka
     spec:
       enableServiceLinks: false
+      securityContext:
+        fsGroup: 1000
       containers:
         - name: kafka
           image: confluentinc/cp-kafka:7.6.9
