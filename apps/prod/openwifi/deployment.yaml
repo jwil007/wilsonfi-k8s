@@ -35,6 +35,11 @@ spec:
     remediation:
       retries: 3
   values:
+    # Enable cert-manager for REST API certificates
+    restapiCerts:
+      enabled: true
+      clusterDomain: cluster.local
+    
     # Disable Bitnami Kafka - use existing Strimzi cluster
     kafka:
       enabled: false
@@ -80,6 +85,11 @@ spec:
         "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
     
     owsub:
+      configProperties:
+        "openwifi.kafka.enable": "true"
+        "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+    
+    owanalytics:
       configProperties:
         "openwifi.kafka.enable": "true"
         "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
