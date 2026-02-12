@@ -47,7 +47,6 @@ spec:
       mixedService: true
       type: LoadBalancer
     dnsmasq:
-      customDnsEntries: []
       additionalHostsEntries:
         - 10.0.50.200 pihole.wilsonfi.dev
         - 10.0.50.200 capacitor.wilsonfi.dev
@@ -55,3 +54,5 @@ spec:
         - 10.0.50.102 kube.wilsonfi.dev
         - 10.0.50.103 kube.wilsonfi.dev
         - 10.0.10.11 openwifi.wlan.local
+        - 10.0.50.200 openwifi.wilsonfi.dev
+        - 10.0.50.200 openwifi-prov.wilsonfi.dev
