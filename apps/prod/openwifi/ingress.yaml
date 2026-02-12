@@ -55,8 +55,20 @@ spec:
       services:
         - name: owsec-owsec
           port: 16001
+          scheme: https
+      middlewares:
+        - name: owsec-tls-skip-verify
   tls:
     secretName: openwifi-gw-tls-secret
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: owsec-tls-skip-verify
+  namespace: openwifi
+spec:
+  serversTransport:
+    insecureSkipVerify: true
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
