@@ -46,6 +46,9 @@ spec:
     serviceDns:
       mixedService: true
       type: LoadBalancer
+
+    ftl:
+     MAXDBDAYS: "7"
     dnsmasq:
       additionalHostsEntries:
         - 10.0.50.200 pihole.wilsonfi.dev
