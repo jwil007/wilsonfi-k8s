@@ -40,9 +40,17 @@ spec:
       passwordKey: "password"  # The key inside the secret
     persistentVolumeClaim:
       enabled: true
-      size: 1Gi
+      size: 5Gi
     serviceWeb:
       type: ClusterIP
     serviceDns:
       mixedService: true
       type: LoadBalancer
+    dnsmasq:
+      customDnsEntries:
+        - address=/pihole.wilsonfi.dev/10.0.50.200
+        - address=/capacitor.wilsonfi.dev/10.0.50.200
+        - address=/kube.wilsonfi.dev/10.0.50.101
+        - address=/kube.wilsonfi.dev/10.0.50.102
+        - address=/kube.wilsonfi.dev/10.0.50.103
+        - address=/openwifi.wlan.local/10.0.10.11
