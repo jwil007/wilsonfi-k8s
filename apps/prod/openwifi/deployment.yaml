@@ -35,11 +35,6 @@ spec:
     remediation:
       retries: 3
   values:
-    # Enable cert-manager for REST API certificates
-    restapiCerts:
-      enabled: true
-      clusterDomain: cluster.local
-    
     # Disable Bitnami Kafka - use existing Strimzi cluster
     kafka:
       enabled: false
@@ -57,6 +52,7 @@ spec:
       configProperties:
         "openwifi.kafka.enable": "true"
         "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+        "openwifi.security.restapi.disable": "true"
       # Expose OWGW websocket for AP connections via MetalLB
       services:
         owgw:
@@ -73,23 +69,28 @@ spec:
       configProperties:
         "openwifi.kafka.enable": "true"
         "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+        "openwifi.security.restapi.disable": "true"
     
     owfms:
       configProperties:
         "openwifi.kafka.enable": "true"
         "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+        "openwifi.security.restapi.disable": "true"
     
     owprov:
       configProperties:
         "openwifi.kafka.enable": "true"
         "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+        "openwifi.security.restapi.disable": "true"
     
     owsub:
       configProperties:
         "openwifi.kafka.enable": "true"
         "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+        "openwifi.security.restapi.disable": "true"
     
     owanalytics:
       configProperties:
         "openwifi.kafka.enable": "true"
         "openwifi.kafka.brokerlist": "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+        "openwifi.security.restapi.disable": "true"
