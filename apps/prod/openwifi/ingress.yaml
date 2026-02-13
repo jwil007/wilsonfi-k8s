@@ -28,7 +28,7 @@ spec:
 apiVersion: traefik.io/v1alpha1
 kind: ServersTransport
 metadata:
-  name: openwifi-transport
+  name: owsec-transport
   namespace: openwifi
 spec:
   insecureSkipVerify: true
@@ -49,7 +49,7 @@ spec:
         - name: owsec-owsec
           port: 16001
           scheme: https
-          serversTransport: openwifi-transport
+          serversTransport: owsec-transport
   tls:
     secretName: openwifi-tls-secret
 ---
