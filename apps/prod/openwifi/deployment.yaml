@@ -239,12 +239,12 @@ spec:
     owgwui:
       fullnameOverride: owgwui
       public_env_variables:
-        REACT_APP_UCENTRALSEC_URL: "https://openwifi.wilsonfi.dev:16001"
+        REACT_APP_UCENTRALSEC_URL: "https://openwifi.wilsonfi.dev"
 
     owprovui:
       fullnameOverride: owprovui
       public_env_variables:
-        REACT_APP_UCENTRALSEC_URL: "https://openwifi.wilsonfi.dev:16001"
+        REACT_APP_UCENTRALSEC_URL: "https://openwifi.wilsonfi.dev"
 
     # ─── Disable optional features ───────────────────────────────
     owls:
