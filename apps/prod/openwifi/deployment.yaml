@@ -164,7 +164,8 @@ spec:
       service:
         type: LoadBalancer
         annotations:
-          metallb.universe.tf/loadBalancerIPs: "10.0.50.204"
+          metallb.universe.tf/loadBalancerIPs: "10.0.50.200"
+          metallb.universe.tf/allow-shared-ip: openwifi
 
     # ─── cert-manager REST API certs ─────────────────────────────
     restapiCerts:
