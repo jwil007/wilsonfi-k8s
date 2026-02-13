@@ -193,6 +193,7 @@ spec:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "kafka:9092"
         openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owgw"
+        openwifi.system.uri.private: "https://owgw-owgw:17002"
         openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
 
     # ─── OpenWiFi Security ───────────────────────────────────────
@@ -201,6 +202,7 @@ spec:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "kafka:9092"
         openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owsec"
+        openwifi.system.uri.private: "https://owsec-owsec:17001"
         openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
 
     # ─── OpenWiFi Firmware ───────────────────────────────────────
@@ -209,6 +211,7 @@ spec:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "kafka:9092"
         openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owfms"
+        openwifi.system.uri.private: "https://owfms-owfms:17004"
         openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
 
     # ─── OpenWiFi Provisioning ───────────────────────────────────
@@ -217,6 +220,7 @@ spec:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "kafka:9092"
         openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owprov"
+        openwifi.system.uri.private: "https://owprov-owprov:17005"
         openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
 
     # ─── OpenWiFi Subscription ───────────────────────────────────
@@ -225,6 +229,7 @@ spec:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "kafka:9092"
         openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owsub"
+        openwifi.system.uri.private: "https://owsub-owsub:17006"
         openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
 
     # ─── OpenWiFi Analytics ──────────────────────────────────────
@@ -233,6 +238,7 @@ spec:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "kafka:9092"
         openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owanalytics"
+        openwifi.system.uri.private: "https://owanalytics-owanalytics:17009"
         openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
 
     # ─── Web UIs ─────────────────────────────────────────────────
