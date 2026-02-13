@@ -19,10 +19,11 @@ metadata:
   namespace: openwifi
 spec:
   interval: 30m
-  chart: 
+  timeout: 15m
+  chart:
     spec:
       chart: openwifi
-      version: '>=0.1.0'
+      version: ">=0.1.0"
       sourceRef:
         kind: HelmRepository
         name: openwifi
@@ -34,7 +35,9 @@ spec:
   upgrade:
     remediation:
       retries: 3
+  # Mount TLS certs from existing secret
   valuesFrom:
+    # owgw certs
     - kind: Secret
       name: openwifi-certs
       valuesKey: websocket-cert.pem
@@ -67,6 +70,7 @@ spec:
       name: openwifi-certs
       valuesKey: clientcas.pem
       targetPath: owgw.certs.clientcas\.pem
+    # owsec certs
     - kind: Secret
       name: openwifi-certs
       valuesKey: restapi-cert.pem
@@ -79,6 +83,7 @@ spec:
       name: openwifi-certs
       valuesKey: restapi-ca.pem
       targetPath: owsec.certs.restapi-ca\.pem
+    # owfms certs
     - kind: Secret
       name: openwifi-certs
       valuesKey: restapi-cert.pem
@@ -91,6 +96,7 @@ spec:
       name: openwifi-certs
       valuesKey: restapi-ca.pem
       targetPath: owfms.certs.restapi-ca\.pem
+    # owprov certs
     - kind: Secret
       name: openwifi-certs
       valuesKey: restapi-cert.pem
@@ -103,6 +109,7 @@ spec:
       name: openwifi-certs
       valuesKey: restapi-ca.pem
       targetPath: owprov.certs.restapi-ca\.pem
+    # owanalytics certs
     - kind: Secret
       name: openwifi-certs
       valuesKey: restapi-cert.pem
@@ -115,6 +122,7 @@ spec:
       name: openwifi-certs
       valuesKey: restapi-ca.pem
       targetPath: owanalytics.certs.restapi-ca\.pem
+    # owsub certs
     - kind: Secret
       name: openwifi-certs
       valuesKey: restapi-cert.pem
@@ -128,11 +136,37 @@ spec:
       valuesKey: restapi-ca.pem
       targetPath: owsub.certs.restapi-ca\.pem
   values:
-    # Disable Bitnami Kafka - use existing Strimzi cluster
+    # ─── Kafka (bitnami subchart) ────────────────────────────────
     kafka:
-      enabled: false
-    
-    # Enable cert-manager for private REST API endpoints
+      enabled: true
+      fullnameOverride: kafka
+      image:
+        repository: bitnamilegacy/kafka
+      volumePermissions:
+        image:
+          repository: bitnamilegacy/os-shell
+      autoDiscovery:
+        volumePermissions:
+          image:
+            repository: bitnamilegacy/kubectl
+      metrics:
+        jmx:
+          image:
+            repository: bitnamilegacy/jmx-exporter
+
+    # ─── HAProxy (bitnami subchart) ──────────────────────────────
+    haproxy:
+      enabled: true
+      image:
+        repository: bitnamilegacy/haproxy
+      fullnameOverride: proxy
+      replicaCount: 1
+      service:
+        type: LoadBalancer
+        annotations:
+          metallb.universe.tf/loadBalancerIPs: "10.0.50.204"
+
+    # ─── cert-manager REST API certs ─────────────────────────────
     restapiCerts:
       enabled: true
       clusterDomain: cluster.local
@@ -143,66 +177,70 @@ spec:
         - owprov
         - owanalytics
         - owsub
-    
-    # Disable HAProxy - use Traefik/MetalLB
-    haproxy:
-      enabled: false
-    
-    # Configure all services to use external Kafka
+
+    # ─── OpenWiFi Gateway ────────────────────────────────────────
     owgw:
       configProperties:
         openwifi.kafka.enable: "true"
-        openwifi.kafka.brokerlist: "openwifi-kafka.openwifi.svc.cluster.local:9092"
-        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owgw"
+        openwifi.kafka.brokerlist: "kafka:9092"
+        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev:16002"
         openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
-      # Expose OWGW websocket for AP connections via MetalLB
-      services:
-        owgw:
-          type: LoadBalancer
-          annotations:
-            metallb.universe.tf/allow-shared-ip: "openwifi"
-    
+
+    # ─── OpenWiFi Security ───────────────────────────────────────
     owsec:
       configProperties:
         openwifi.kafka.enable: "true"
-        openwifi.kafka.brokerlist: "openwifi-kafka.openwifi.svc.cluster.local:9092"
-        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev"
+        openwifi.kafka.brokerlist: "kafka:9092"
+        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev:16001"
         openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
-    
+
+    # ─── OpenWiFi Firmware ───────────────────────────────────────
     owfms:
       configProperties:
         openwifi.kafka.enable: "true"
-        openwifi.kafka.brokerlist: "openwifi-kafka.openwifi.svc.cluster.local:9092"
-        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owfms"
+        openwifi.kafka.brokerlist: "kafka:9092"
+        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev:16004"
         openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
-    
+
+    # ─── OpenWiFi Provisioning ───────────────────────────────────
     owprov:
       configProperties:
         openwifi.kafka.enable: "true"
-        openwifi.kafka.brokerlist: "openwifi-kafka.openwifi.svc.cluster.local:9092"
-        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owprov"
+        openwifi.kafka.brokerlist: "kafka:9092"
+        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev:16005"
         openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
-    
+
+    # ─── OpenWiFi Subscription ───────────────────────────────────
     owsub:
       configProperties:
         openwifi.kafka.enable: "true"
-        openwifi.kafka.brokerlist: "openwifi-kafka.openwifi.svc.cluster.local:9092"
-        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owsub"
+        openwifi.kafka.brokerlist: "kafka:9092"
+        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev:16006"
         openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
-    
+
+    # ─── OpenWiFi Analytics ──────────────────────────────────────
     owanalytics:
-      enabled: true
       configProperties:
         openwifi.kafka.enable: "true"
-        openwifi.kafka.brokerlist: "openwifi-kafka.openwifi.svc.cluster.local:9092"
-        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owanalytics"
+        openwifi.kafka.brokerlist: "kafka:9092"
+        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev:16009"
         openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
-    
-    # Configure Web UIs to use correct owsec endpoint
+
+    # ─── Web UIs ─────────────────────────────────────────────────
     owgwui:
+      fullnameOverride: owgwui
       public_env_variables:
-        REACT_APP_UCENTRALSEC_URL: "https://openwifi.wilsonfi.dev"
-    
+        REACT_APP_UCENTRALSEC_URL: "https://openwifi.wilsonfi.dev:16001"
+
     owprovui:
+      fullnameOverride: owprovui
       public_env_variables:
-        REACT_APP_UCENTRALSEC_URL: "https://openwifi.wilsonfi.dev"
+        REACT_APP_UCENTRALSEC_URL: "https://openwifi.wilsonfi.dev:16001"
+
+    # ─── Disable optional features ───────────────────────────────
+    owls:
+      enabled: false
+    owlsui:
+      enabled: false
+    clustersysteminfo:
+      enabled: false

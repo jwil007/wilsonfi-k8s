@@ -1,10 +1,10 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: openwifi-gw-tls
+  name: openwifi-tls
   namespace: openwifi
 spec:
-  secretName: openwifi-gw-tls-secret
+  secretName: openwifi-tls-secret
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer
@@ -24,6 +24,7 @@ spec:
   dnsNames:
     - openwifi-prov.wilsonfi.dev
 ---
+# Gateway UI - main dashboard
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
@@ -36,193 +37,12 @@ spec:
     - match: Host(`openwifi.wilsonfi.dev`)
       kind: Rule
       services:
-        - name: owgwui-owgwui
+        - name: owgwui
           port: 80
   tls:
-    secretName: openwifi-gw-tls-secret
+    secretName: openwifi-tls-secret
 ---
-apiVersion: traefik.io/v1alpha1
-kind: ServersTransport
-metadata:
-  name: owsec-transport
-  namespace: openwifi
-spec:
-  insecureSkipVerify: true
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: openwifi-sec-api
-  namespace: openwifi
-spec:
-  entryPoints:
-    - websecure
-  routes:
-    - match: Host(`openwifi.wilsonfi.dev`) && PathPrefix(`/api/v1`)
-      kind: Rule
-      services:
-        - name: owsec-owsec
-          port: 16001
-          scheme: https
-          serversTransport: owsec-transport
-  tls:
-    secretName: openwifi-gw-tls-secret
----
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-  name: strip-owgw
-  namespace: openwifi
-spec:
-  stripPrefix:
-    prefixes:
-      - /owgw
----
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-  name: strip-owfms
-  namespace: openwifi
-spec:
-  stripPrefix:
-    prefixes:
-      - /owfms
----
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-  name: strip-owprov
-  namespace: openwifi
-spec:
-  stripPrefix:
-    prefixes:
-      - /owprov
----
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-  name: strip-owsub
-  namespace: openwifi
-spec:
-  stripPrefix:
-    prefixes:
-      - /owsub
----
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-  name: strip-owanalytics
-  namespace: openwifi
-spec:
-  stripPrefix:
-    prefixes:
-      - /owanalytics
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: openwifi-gw-api
-  namespace: openwifi
-spec:
-  entryPoints:
-    - websecure
-  routes:
-    - match: Host(`openwifi.wilsonfi.dev`) && PathPrefix(`/owgw`)
-      kind: Rule
-      middlewares:
-        - name: strip-owgw
-      services:
-        - name: owgw-owgw
-          port: 16002
-          scheme: https
-          serversTransport: owsec-transport
-  tls:
-    secretName: openwifi-gw-tls-secret
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: openwifi-fms-api
-  namespace: openwifi
-spec:
-  entryPoints:
-    - websecure
-  routes:
-    - match: Host(`openwifi.wilsonfi.dev`) && PathPrefix(`/owfms`)
-      kind: Rule
-      middlewares:
-        - name: strip-owfms
-      services:
-        - name: owfms-owfms
-          port: 16004
-          scheme: https
-          serversTransport: owsec-transport
-  tls:
-    secretName: openwifi-gw-tls-secret
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: openwifi-prov-api
-  namespace: openwifi
-spec:
-  entryPoints:
-    - websecure
-  routes:
-    - match: Host(`openwifi.wilsonfi.dev`) && PathPrefix(`/owprov`)
-      kind: Rule
-      middlewares:
-        - name: strip-owprov
-      services:
-        - name: owprov-owprov
-          port: 16005
-          scheme: https
-          serversTransport: owsec-transport
-  tls:
-    secretName: openwifi-gw-tls-secret
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: openwifi-sub-api
-  namespace: openwifi
-spec:
-  entryPoints:
-    - websecure
-  routes:
-    - match: Host(`openwifi.wilsonfi.dev`) && PathPrefix(`/owsub`)
-      kind: Rule
-      middlewares:
-        - name: strip-owsub
-      services:
-        - name: owsub-owsub
-          port: 16006
-          scheme: https
-          serversTransport: owsec-transport
-  tls:
-    secretName: openwifi-gw-tls-secret
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: openwifi-analytics-api
-  namespace: openwifi
-spec:
-  entryPoints:
-    - websecure
-  routes:
-    - match: Host(`openwifi.wilsonfi.dev`) && PathPrefix(`/owanalytics`)
-      kind: Rule
-      middlewares:
-        - name: strip-owanalytics
-      services:
-        - name: owanalytics-owanalytics
-          port: 16009
-          scheme: https
-          serversTransport: owsec-transport
-  tls:
-    secretName: openwifi-gw-tls-secret
----
+# Provisioning UI
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
@@ -235,7 +55,7 @@ spec:
     - match: Host(`openwifi-prov.wilsonfi.dev`)
       kind: Rule
       services:
-        - name: owprovui-owprovui
+        - name: owprovui
           port: 80
   tls:
     secretName: openwifi-prov-tls-secret
