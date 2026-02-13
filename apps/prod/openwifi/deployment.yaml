@@ -192,7 +192,7 @@ spec:
       configProperties:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "kafka:9092"
-        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev:16002"
+        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owgw"
         openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
 
     # ─── OpenWiFi Security ───────────────────────────────────────
@@ -200,7 +200,7 @@ spec:
       configProperties:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "kafka:9092"
-        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev:16001"
+        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owsec"
         openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
 
     # ─── OpenWiFi Firmware ───────────────────────────────────────
@@ -208,7 +208,7 @@ spec:
       configProperties:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "kafka:9092"
-        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev:16004"
+        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owfms"
         openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
 
     # ─── OpenWiFi Provisioning ───────────────────────────────────
@@ -216,7 +216,7 @@ spec:
       configProperties:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "kafka:9092"
-        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev:16005"
+        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owprov"
         openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
 
     # ─── OpenWiFi Subscription ───────────────────────────────────
@@ -224,7 +224,7 @@ spec:
       configProperties:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "kafka:9092"
-        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev:16006"
+        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owsub"
         openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
 
     # ─── OpenWiFi Analytics ──────────────────────────────────────
@@ -232,19 +232,19 @@ spec:
       configProperties:
         openwifi.kafka.enable: "true"
         openwifi.kafka.brokerlist: "kafka:9092"
-        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev:16009"
+        openwifi.system.uri.public: "https://openwifi.wilsonfi.dev/owanalytics"
         openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
 
     # ─── Web UIs ─────────────────────────────────────────────────
     owgwui:
       fullnameOverride: owgwui
       public_env_variables:
-        REACT_APP_UCENTRALSEC_URL: "https://openwifi.wilsonfi.dev"
+        REACT_APP_UCENTRALSEC_URL: "https://openwifi.wilsonfi.dev/owsec"
 
     owprovui:
       fullnameOverride: owprovui
       public_env_variables:
-        REACT_APP_UCENTRALSEC_URL: "https://openwifi.wilsonfi.dev"
+        REACT_APP_UCENTRALSEC_URL: "https://openwifi.wilsonfi.dev/owsec"
 
     # ─── Disable optional features ───────────────────────────────
     owls:

@@ -33,21 +33,91 @@ metadata:
 spec:
   insecureSkipVerify: true
 ---
-# owsec API — routed through Traefik so browser gets valid Let's Encrypt cert
+# Strip /owXXX prefix before forwarding to backend services
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-service-prefix
+  namespace: openwifi
+spec:
+  stripPrefix:
+    prefixes:
+      - /owsec
+      - /owgw
+      - /owfms
+      - /owprov
+      - /owsub
+      - /owanalytics
+---
+# All OpenWiFi API services — routed through Traefik on port 443
+# so the browser gets a valid Let's Encrypt cert instead of self-signed
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: openwifi-sec-api
+  name: openwifi-api
   namespace: openwifi
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`openwifi.wilsonfi.dev`) && PathPrefix(`/api/v1`)
+    # Security service (login, tokens, user management)
+    - match: Host(`openwifi.wilsonfi.dev`) && PathPrefix(`/owsec`)
       kind: Rule
+      middlewares:
+        - name: strip-service-prefix
       services:
         - name: owsec-owsec
           port: 16001
+          scheme: https
+          serversTransport: owsec-transport
+    # Gateway service (devices, commands)
+    - match: Host(`openwifi.wilsonfi.dev`) && PathPrefix(`/owgw`)
+      kind: Rule
+      middlewares:
+        - name: strip-service-prefix
+      services:
+        - name: owgw-owgw
+          port: 16002
+          scheme: https
+          serversTransport: owsec-transport
+    # Firmware service
+    - match: Host(`openwifi.wilsonfi.dev`) && PathPrefix(`/owfms`)
+      kind: Rule
+      middlewares:
+        - name: strip-service-prefix
+      services:
+        - name: owfms-owfms
+          port: 16004
+          scheme: https
+          serversTransport: owsec-transport
+    # Provisioning service
+    - match: Host(`openwifi.wilsonfi.dev`) && PathPrefix(`/owprov`)
+      kind: Rule
+      middlewares:
+        - name: strip-service-prefix
+      services:
+        - name: owprov-owprov
+          port: 16005
+          scheme: https
+          serversTransport: owsec-transport
+    # Subscription service
+    - match: Host(`openwifi.wilsonfi.dev`) && PathPrefix(`/owsub`)
+      kind: Rule
+      middlewares:
+        - name: strip-service-prefix
+      services:
+        - name: owsub-owsub
+          port: 16006
+          scheme: https
+          serversTransport: owsec-transport
+    # Analytics service
+    - match: Host(`openwifi.wilsonfi.dev`) && PathPrefix(`/owanalytics`)
+      kind: Rule
+      middlewares:
+        - name: strip-service-prefix
+      services:
+        - name: owanalytics-owanalytics
+          port: 16009
           scheme: https
           serversTransport: owsec-transport
   tls:
