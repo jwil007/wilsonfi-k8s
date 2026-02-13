@@ -135,6 +135,15 @@ spec:
       name: openwifi-certs
       valuesKey: restapi-ca.pem
       targetPath: owsub.certs.restapi-ca\.pem
+    # S3 credentials for firmware database
+    - kind: Secret
+      name: owfms-s3-credentials
+      valuesKey: s3-key
+      targetPath: owfms.configProperties.s3\.key
+    - kind: Secret
+      name: owfms-s3-credentials
+      valuesKey: s3-secret
+      targetPath: owfms.configProperties.s3\.secret
   values:
     # ─── Kafka (bitnami subchart) ────────────────────────────────
     kafka:
