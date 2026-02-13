@@ -49,6 +49,9 @@ spec:
                    values:
                      - traefik
               topologyKey: kubernetes.io/hostname
+    providers:
+      kubernetesCRD:
+        allowCrossNamespace: true
     ingressRoute:
       dashboard:
         enabled: true
