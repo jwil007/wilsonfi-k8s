@@ -29,6 +29,7 @@ spec:
       options:
         disableNameSuffixHash: true
     alloy:
+      stabilityLevel: "experimental"
       extraPorts:
         - name: syslog-tcp
           port: 1514
@@ -89,6 +90,7 @@ spec:
           }
 
           // Add static labels (cluster, job) and forward to Loki
+          // Used by the TCP/RFC5424 listener where the syslog parser handles field extraction.
           loki.process "syslog" {
             stage.static_labels {
               values = {
@@ -96,6 +98,49 @@ spec:
                 job     = "syslog",
               }
             }
+            forward_to = [loki.write.default.receiver]
+          }
+
+          // Process raw UDP syslog: try to extract labels from several common
+          // formats via regex, then forward to Loki.  Messages that match none
+          // of the patterns still pass through with source_ip + static labels.
+          loki.process "syslog_raw" {
+            // RFC3164: <pri>Mon DD HH:MM:SS hostname app[PID]: message
+            stage.regex {
+              expression = "^<\\d+>\\w{3}\\s+\\d+\\s+[\\d:]+\\s+(?P<syslog_hostname>\\S+)\\s+(?P<syslog_app>[\\w./-]+?)(?:\\[\\d+\\])?:\\s+(?P<message>.+)"
+            }
+
+            // Ruckus: FACILITY.SEVERITY: Mon DD HH:MM:SS hostname: message
+            stage.regex {
+              expression = "^(?P<facility>\\w+)\\.(?P<severity>\\w+):\\s+\\w{3}\\s+\\d+\\s+[\\d:]+\\s+(?P<syslog_hostname>\\S+?):\\s+(?P<message>.+)"
+            }
+
+            // FortiGate: <pri>date=YYYY-MM-DD time=HH:MM:SS devname="X" ...
+            stage.regex {
+              expression = "^<\\d+>date=\\S+\\s+time=\\S+\\s+devname=\"?(?P<syslog_hostname>[^\"\\s]+)"
+            }
+
+            stage.labels {
+              values = {
+                syslog_hostname = "",
+                syslog_app      = "",
+                severity        = "",
+                facility        = "",
+              }
+            }
+
+            stage.static_labels {
+              values = {
+                cluster = "wilsonfi-prod",
+                job     = "syslog",
+              }
+            }
+
+            // Use extracted message body when available; otherwise keep full line
+            stage.output {
+              source = "message"
+            }
+
             forward_to = [loki.write.default.receiver]
           }
 
@@ -112,18 +157,18 @@ spec:
             forward_to    = [loki.process.syslog.receiver]
           }
 
-          // UDP listener – RFC3164 (legacy BSD syslog, used by most network gear)
+          // UDP listener – raw format (accepts any syslog variant without
+          // rejecting non-compliant messages).  Label extraction is handled
+          // downstream in loki.process.syslog_raw via regex stages.
           loki.source.syslog "syslog_udp" {
             listener {
-              address               = "0.0.0.0:1514"
-              protocol              = "udp"
-              syslog_format         = "rfc3164"
-              use_incoming_timestamp = true
-              rfc3164_default_to_current_year = true
-              labels                = { transport = "udp" }
+              address       = "0.0.0.0:1514"
+              protocol      = "udp"
+              syslog_format = "raw"
+              labels        = { transport = "udp" }
             }
             relabel_rules = loki.relabel.syslog.rules
-            forward_to    = [loki.process.syslog.receiver]
+            forward_to    = [loki.process.syslog_raw.receiver]
           }
    
           // local.file_match discovers files on the local filesystem using glob patterns and the doublestar library. It returns an array of file paths.
