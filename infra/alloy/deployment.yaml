@@ -29,6 +29,15 @@ spec:
       options:
         disableNameSuffixHash: true
     alloy:
+      extraPorts:
+        - name: syslog-tcp
+          port: 1514
+          targetPort: 1514
+          protocol: TCP
+        - name: syslog-udp
+          port: 1514
+          targetPort: 1514
+          protocol: UDP
       configMap:
         content: |-
 
@@ -36,6 +45,76 @@ spec:
             endpoint {
               url = "http://loki:3100/loki/api/v1/push"
             }
+          }
+
+          // ──────────────────────────────────────────────
+          // Syslog collection
+          // ──────────────────────────────────────────────
+
+          // Relabel rules to promote internal __syslog_* labels so they survive
+          // the label drop that happens before log entries leave the component.
+          loki.relabel "syslog" {
+            forward_to = [loki.process.syslog.receiver]
+
+            // Preserve the sender's IP address
+            rule {
+              source_labels = ["__syslog_connection_ip_address"]
+              target_label  = "source_ip"
+            }
+
+            // Syslog header fields
+            rule {
+              source_labels = ["__syslog_message_hostname"]
+              target_label  = "syslog_hostname"
+            }
+            rule {
+              source_labels = ["__syslog_message_app_name"]
+              target_label  = "syslog_app"
+            }
+            rule {
+              source_labels = ["__syslog_message_severity"]
+              target_label  = "severity"
+            }
+            rule {
+              source_labels = ["__syslog_message_facility"]
+              target_label  = "facility"
+            }
+          }
+
+          // Add static labels (cluster, job) and forward to Loki
+          loki.process "syslog" {
+            stage.static_labels {
+              values = {
+                cluster = "wilsonfi-prod",
+                job     = "syslog",
+              }
+            }
+            forward_to = [loki.write.default.receiver]
+          }
+
+          // TCP listener – RFC5424 (modern structured syslog)
+          loki.source.syslog "syslog_tcp" {
+            listener {
+              address               = "0.0.0.0:1514"
+              protocol              = "tcp"
+              label_structured_data = true
+              use_incoming_timestamp = true
+              labels                = { transport = "tcp" }
+            }
+            forward_to = [loki.relabel.syslog.receiver]
+          }
+
+          // UDP listener – RFC3164 (legacy BSD syslog, used by most network gear)
+          loki.source.syslog "syslog_udp" {
+            listener {
+              address               = "0.0.0.0:1514"
+              protocol              = "udp"
+              syslog_format         = "rfc3164"
+              use_incoming_timestamp = true
+              rfc3164_default_to_current_year = true
+              labels                = { transport = "udp" }
+            }
+            forward_to = [loki.relabel.syslog.receiver]
           }
    
           // local.file_match discovers files on the local filesystem using glob patterns and the doublestar library. It returns an array of file paths.
