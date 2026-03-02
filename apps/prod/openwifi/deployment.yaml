@@ -170,6 +170,12 @@ spec:
         jmx:
           image:
             repository: bitnamilegacy/jmx-exporter
+      controller:
+        resources:
+          requests:
+            memory: 2Gi
+          limits:
+            memory: 4Gi
 
     # ─── HAProxy (bitnami subchart) ──────────────────────────────
     haproxy:
