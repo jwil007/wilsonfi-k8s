@@ -53,8 +53,11 @@ spec:
 
           // Relabel rules to promote internal __syslog_* labels so they survive
           // the label drop that happens before log entries leave the component.
+          // These rules are applied via relabel_rules= on each loki.source.syslog,
+          // BEFORE the __ prefix strip. The forward_to here is required by the
+          // component but unused in the data flow.
           loki.relabel "syslog" {
-            forward_to = [loki.process.syslog.receiver]
+            forward_to = []
 
             // Preserve the sender's IP address
             rule {
@@ -62,22 +65,26 @@ spec:
               target_label  = "source_ip"
             }
 
-            // Syslog header fields
+            // Syslog header fields (only set when non-empty)
             rule {
               source_labels = ["__syslog_message_hostname"]
               target_label  = "syslog_hostname"
+              regex         = "(.+)"
             }
             rule {
               source_labels = ["__syslog_message_app_name"]
               target_label  = "syslog_app"
+              regex         = "(.+)"
             }
             rule {
               source_labels = ["__syslog_message_severity"]
               target_label  = "severity"
+              regex         = "(.+)"
             }
             rule {
               source_labels = ["__syslog_message_facility"]
               target_label  = "facility"
+              regex         = "(.+)"
             }
           }
 
@@ -101,7 +108,8 @@ spec:
               use_incoming_timestamp = true
               labels                = { transport = "tcp" }
             }
-            forward_to = [loki.relabel.syslog.receiver]
+            relabel_rules = loki.relabel.syslog.rules
+            forward_to    = [loki.process.syslog.receiver]
           }
 
           // UDP listener – RFC3164 (legacy BSD syslog, used by most network gear)
@@ -114,7 +122,8 @@ spec:
               rfc3164_default_to_current_year = true
               labels                = { transport = "udp" }
             }
-            forward_to = [loki.relabel.syslog.receiver]
+            relabel_rules = loki.relabel.syslog.rules
+            forward_to    = [loki.process.syslog.receiver]
           }
    
           // local.file_match discovers files on the local filesystem using glob patterns and the doublestar library. It returns an array of file paths.
