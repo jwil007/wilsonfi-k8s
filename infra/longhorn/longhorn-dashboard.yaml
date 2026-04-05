@@ -20,7 +20,7 @@ metadata:
   namespace: longhorn
 spec:
   entryPoints:
-    - web
+    - websecure
   routes:
     - match: Host(`longhorn.wilsonfi.dev`)
       kind: Rule
