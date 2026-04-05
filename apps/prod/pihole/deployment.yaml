@@ -56,6 +56,5 @@ spec:
         - 10.0.10.11 openwifi.wlan.local
         - 10.0.50.200 openwifi.wilsonfi.dev
         - 10.0.50.200 openwifi-prov.wilsonfi.dev
-        - 10.0.50.200 grafana.wilsonfi.dev
         - 10.0.50.200 traefik.wilsonfi.dev
         - 10.0.50.200 longhorn.wilsonfi.dev
