@@ -190,6 +190,10 @@ spec:
           metallb.universe.tf/loadBalancerIPs: "10.0.50.200"
           metallb.universe.tf/allow-shared-ip: openwifi
         ports:
+          - name: owgwrttys
+            port: 5912
+            protocol: TCP
+            targetPort: owgwrttys
           - name: health
             port: 8080
             protocol: TCP
