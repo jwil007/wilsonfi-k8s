@@ -277,6 +277,7 @@ spec:
         openwifi.system.uri.private: "http://owgw-owgw:17002"
         openwifi.system.uri.ui: "https://openwifi.wilsonfi.dev"
         rtty.server: openwifi.wlan.local
+        ucentral.websocket.host.0.security: relaxed
 
     # ─── OpenWiFi Security ───────────────────────────────────────
     owsec:
