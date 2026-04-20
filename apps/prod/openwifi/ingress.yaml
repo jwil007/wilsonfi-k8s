@@ -137,7 +137,7 @@ spec:
           port: 80
   tls:
     secretName: openwifi-prov-tls-secret
-    ---
+---
 # Web console (rtty viewport)
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
