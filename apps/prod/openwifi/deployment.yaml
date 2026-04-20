@@ -179,7 +179,7 @@ spec:
 
     # ─── HAProxy (bitnami subchart) ──────────────────────────────
     haproxy:
-      enabled: false
+      enabled: true
       image:
         repository: bitnamilegacy/haproxy
       fullnameOverride: proxy
