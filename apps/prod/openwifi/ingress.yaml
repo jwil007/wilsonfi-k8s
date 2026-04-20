@@ -137,22 +137,5 @@ spec:
           port: 80
   tls:
     secretName: openwifi-prov-tls-secret
----
-# web console
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: openwifi-web-console
-  namespace: openwifi
-spec:
-  entryPoints:
-    - websecure
-  routes:
-    - match: Host(`openwifi.wilsonfi.dev`)
-      kind: Rule
-      services:
-        - name: owgw-owgw
-          port: 5913
-  tls:
-    secretName: openwifi-tls-secret
+
 
