@@ -148,7 +148,7 @@ spec:
   entryPoints:
     - rtty-view
   routes:
-    - match: Host(`openwifi.wilsonfi.dev`)
+    - match: Host(`openwifi.wlan.local`)
       kind: Rule
       services:
         - name: owgw-owgw
