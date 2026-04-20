@@ -189,6 +189,67 @@ spec:
         annotations:
           metallb.universe.tf/loadBalancerIPs: "10.0.50.200"
           metallb.universe.tf/allow-shared-ip: openwifi
+        ports:
+          - name: health
+            port: 8080
+            protocol: TCP
+            targetPort: health
+          - name: owfmsrest
+            port: 16004
+            protocol: TCP
+            targetPort: owfmsrest
+          - name: owfmsrestint
+            port: 17004
+            protocol: TCP
+            targetPort: owfmsrestint
+          - name: owgwws
+            port: 15002
+            protocol: TCP
+            targetPort: owgwws
+          - name: owgwrest
+            port: 16002
+            protocol: TCP
+            targetPort: owgwrest
+          - name: owgwfileup
+            port: 16003
+            protocol: TCP
+            targetPort: owgwfileup
+          - name: owgwrestint
+            port: 17002
+            protocol: TCP
+            targetPort: owgwrestint
+          - name: owprovrest
+            port: 16005
+            protocol: TCP
+            targetPort: owprovrest
+          - name: owprovrestint
+            port: 17005
+            protocol: TCP
+            targetPort: owprovrestint
+          - name: owsecrest
+            port: 16001
+            protocol: TCP
+            targetPort: owsecrest
+          - name: owsecrestint
+            port: 17001
+            protocol: TCP
+            targetPort: owsecrestint
+          - name: owanalyticsrest
+            port: 16009
+            protocol: TCP
+            targetPort: owanalyticsrest
+          - name: owanalyticsrint
+            port: 17009
+            protocol: TCP
+            targetPort: owanalyticsrint
+          - name: owsubrest
+            port: 16006
+            protocol: TCP
+            targetPort: owsubrest
+          - name: owsubrint
+            port: 17006
+            protocol: TCP
+            targetPort: owsubrint
 
     # ─── cert-manager REST API certs ─────────────────────────────
     restapiCerts:
