@@ -137,23 +137,5 @@ spec:
           port: 80
   tls:
     secretName: openwifi-prov-tls-secret
----
-# Web console (rtty viewport)
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: openwifi-console
-  namespace: openwifi
-spec:
-  entryPoints:
-    - rtty-view
-  routes:
-    - match: Host(`openwifi.wlan.local`)
-      kind: Rule
-      services:
-        - name: owgw-owgw
-          port: 5913
-  tls:
-    secretName: openwifi-tls-secret
 
 
