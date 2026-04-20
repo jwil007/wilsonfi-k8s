@@ -179,7 +179,7 @@ spec:
 
     # ─── HAProxy (bitnami subchart) ──────────────────────────────
     haproxy:
-      enabled: true
+      enabled: false
       image:
         repository: bitnamilegacy/haproxy
       fullnameOverride: proxy
@@ -280,6 +280,4 @@ spec:
     owlsui:
       enabled: false
     clustersysteminfo:
-      enabled: false
-    haproxy:
       enabled: false
