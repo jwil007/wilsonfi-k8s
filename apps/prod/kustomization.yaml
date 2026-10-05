@@ -7,4 +7,5 @@ resources:
   - tailscale
   - snmp-exporter
   - openwifi
+  - technitium
   # Add app manifests here as you deploy them

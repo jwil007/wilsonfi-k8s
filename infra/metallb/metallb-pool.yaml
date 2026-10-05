@@ -9,6 +9,17 @@ spec:
   addresses:
     - 10.0.50.200-10.0.50.250
 ---
+# Dedicated static IP for Technitium DNS
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: dns
+  namespace: metallb-system
+spec:
+  addresses:
+    - 10.0.50.53/32
+  autoAssign: false
+---
 # L2 Advertisement
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
