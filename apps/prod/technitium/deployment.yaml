@@ -36,62 +36,25 @@ spec:
       retries: 3
   values:
     image:
-      # Pin to the same version as your other cluster nodes (LXC, Pi).
-      # Mismatched versions can break clustering.
-      tag: "15.6.0"
-      pullPolicy: IfNotPresent
+      tag: "15.6.0"   # keep in lockstep with the other cluster nodes
 
     controller:
-      replicas: 1
-      strategy: Recreate   # RWO PVC; avoid two pods fighting over the volume
-
-    env:
-      TZ: America/Phoenix
-      DNS_SERVER_DOMAIN: technitium-k8s.wilsonfi.dev
-      DNS_SERVER_ADMIN_PASSWORD:
-        valueFrom:
-          secretKeyRef:
-            name: technitium-admin
-            key: password
+      strategy: Recreate   # RWO PVC
 
     persistence:
       config:
-        enabled: true
         type: pvc
-        mountPath: /etc/dns
-        accessMode: ReadWriteOnce
         size: 5Gi
-        # storageClass: longhorn
 
     service:
       main:
-        type: LoadBalancer
-        externalTrafficPolicy: Local   # preserves client IPs in query logs
         annotations:
-          # Static IP — required for clustering
           metallb.universe.tf/loadBalancerIPs: 10.0.50.53
         ports:
           http:
-            enabled: true
-            primary: true
             port: 5380
-            targetPort: 5380
-            protocol: TCP
-          # Cluster API + HTTPS console. Exposed directly, NOT through
-          # Traefik — clustering uses DANE and needs TLS end-to-end.
-          https:
-            enabled: true
+          https:          # cluster API — direct, not via Traefik (DANE)
             port: 53443
-            targetPort: 53443
-            protocol: TCP
-          dns-udp:
-            enabled: true
-            port: 53
-            protocol: UDP
-          dns-tcp:
-            enabled: true
-            port: 53
-            protocol: TCP
           dhcp:
             enabled: false
           dot:
@@ -99,11 +62,12 @@ spec:
           doh-reverse:
             enabled: false
 
-    # Admin UI over plain HTTP via Traefik (convenience only)
     ingress:
       main:
         enabled: true
         ingressClassName: traefik
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt-prod
         hosts:
           - host: technitium.wilsonfi.dev
             paths:
@@ -111,4 +75,7 @@ spec:
                 pathType: Prefix
                 service:
                   port: 5380
-        tls: []
+        tls:
+          - hosts:
+              - technitium.wilsonfi.dev
+            secretName: technitium-tls
