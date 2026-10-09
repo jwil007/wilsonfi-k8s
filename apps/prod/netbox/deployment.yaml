@@ -51,6 +51,15 @@ spec:
       existingSecretName: netbox-email   # chart requires the key even with SMTP unset
       existingSecretKey: email-password
 
+    # Chart's "medium" preset caps CPU at 750m, which makes migrations crawl
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 2000m
+        memory: 2Gi
+
     persistence:
       enabled: true
       size: 5Gi   # uploaded media (device images, attachments)
