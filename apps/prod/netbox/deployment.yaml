@@ -47,6 +47,9 @@ spec:
     existingSecret: netbox-config   # secret_key, api_token_peppers
     superuser:
       existingSecret: netbox-superuser   # username, email, password, api_token
+    email:
+      existingSecretName: netbox-email   # chart requires the key even with SMTP unset
+      existingSecretKey: email-password
 
     persistence:
       enabled: true
