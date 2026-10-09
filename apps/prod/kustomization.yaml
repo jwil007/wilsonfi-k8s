@@ -8,4 +8,5 @@ resources:
   - snmp-exporter
   - openwifi
   - technitium
+  - netbox
   # Add app manifests here as you deploy them

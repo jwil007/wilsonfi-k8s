@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: netbox
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: netbox
+  namespace: flux-system
+spec:
+  interval: 24h
+  url: https://charts.netbox.oss.netboxlabs.com/
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: netbox
+  namespace: netbox
+spec:
+  interval: 30m
+  timeout: 15m   # first install runs DB migrations before the pod goes ready
+  chart:
+    spec:
+      chart: netbox
+      version: '>=8.0.0 <9.0.0'
+      sourceRef:
+        kind: HelmRepository
+        name: netbox
+        namespace: flux-system
+      interval: 12h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    allowedHosts:
+      - netbox.wilsonfi.dev
+    csrf:
+      trustedOrigins:
+        - https://netbox.wilsonfi.dev
+    timeZone: America/Phoenix
+
+    # All credentials come from SOPS-encrypted secrets in secret.yaml
+    existingSecret: netbox-config   # secret_key, api_token_peppers
+    superuser:
+      existingSecret: netbox-superuser   # username, email, password, api_token
+
+    persistence:
+      enabled: true
+      size: 5Gi   # uploaded media (device images, attachments)
+
+    # Bundled Bitnami subcharts
+    postgresql:
+      enabled: true
+      auth:
+        existingSecret: netbox-postgresql
+        secretKeys:
+          adminPasswordKey: postgres-password
+          userPasswordKey: password
+      primary:
+        persistence:
+          size: 10Gi
+    valkey:
+      enabled: true
+      auth:
+        existingSecret: netbox-valkey
+        existingSecretPasswordKey: valkey-password
+      architecture: standalone   # no replicas needed for a homelab
