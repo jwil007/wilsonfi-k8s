@@ -64,6 +64,12 @@ spec:
       enabled: true
       size: 5Gi   # uploaded media (device images, attachments)
 
+    # Applies to the bundled postgres too. Granian's worker threads each keep a
+    # persistent connection that's never reaped, exhausting max_connections (100);
+    # 0 = close after each request.
+    externalDatabase:
+      connMaxAge: 0
+
     # Bundled Bitnami subcharts
     postgresql:
       enabled: true
