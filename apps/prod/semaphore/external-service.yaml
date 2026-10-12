@@ -1,0 +1,38 @@
+# Semaphore runs on a VM outside the cluster (10.0.10.12:3000).
+# A selector-less Service + hand-written EndpointSlice gives Traefik
+# a normal Service to route to.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: semaphore
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: semaphore
+  namespace: semaphore
+spec:
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+      protocol: TCP
+---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: semaphore-external
+  namespace: semaphore
+  labels:
+    kubernetes.io/service-name: semaphore
+    endpointslice.kubernetes.io/managed-by: flux
+addressType: IPv4
+ports:
+  - name: http
+    port: 3000
+    protocol: TCP
+endpoints:
+  - addresses:
+      - 10.0.10.12
+    conditions:
+      ready: true

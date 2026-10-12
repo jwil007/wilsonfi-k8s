@@ -9,4 +9,5 @@ resources:
   - openwifi
   - technitium
   - netbox
+  - semaphore
   # Add app manifests here as you deploy them
