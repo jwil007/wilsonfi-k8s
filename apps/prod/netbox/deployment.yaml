@@ -70,9 +70,13 @@ spec:
     externalDatabase:
       connMaxAge: 0
 
-    # Bundled Bitnami subcharts
+    # Bundled Bitnami subcharts. Bitnami only publishes `latest` now, so pin the
+    # running digests — a node pulling a newer `latest` could bring a new PG major
+    # that can't open the existing data dir. Digests = PG 18.6 / Valkey 9.1.2.
     postgresql:
       enabled: true
+      image:
+        digest: sha256:ec3840dfcf0caf786877a67d83bc3ebb0c042fd92445c062ec89c51245290942
       auth:
         existingSecret: netbox-postgresql
         secretKeys:
@@ -92,6 +96,8 @@ spec:
             memory: 1Gi
     valkey:
       enabled: true
+      image:
+        digest: sha256:3ab4091a7e3cb5f12184a3009cad1aefef50f424c0860d580a41675e38392ba5
       auth:
         existingSecret: netbox-valkey
         existingSecretPasswordKey: valkey-password
