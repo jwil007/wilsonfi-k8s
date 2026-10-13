@@ -41,6 +41,9 @@ spec:
     remediation:
       retries: 3
   values:
+    defaultBackupStore:
+      backupTarget: s3://longhorn-backup-wilsonfi@us-west-004/
+      backupTargetCredentialSecret: b2-backup-secret
     preUpgradeChecker:
       upgradeVersionCheck: false
     image:
