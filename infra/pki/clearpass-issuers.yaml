@@ -1,0 +1,49 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: clearpass-https
+  namespace: pki
+spec:
+  secretName: clearpass-https-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-prod
+  dnsNames:
+    - clearpass.wilsonfi.dev
+    - cppm01.wilsonfi.dev
+  privateKey:
+    algorithm: RSA
+    size: 2048
+    rotationPolicy: Always
+  keystores:
+    pkcs12:
+      create: true
+      profile: LegacyDES
+      passwordSecretRef:
+        name: clearpass-p12-password
+        key: password
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: clearpass-radius
+  namespace: pki
+spec:
+  secretName: clearpass-radius-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: step-ca-acme
+  dnsNames:
+    - radius.wilsonfi.dev
+  renewBefore: 720h
+  privateKey:
+    algorithm: RSA
+    size: 2048
+    rotationPolicy: Always
+  keystores:
+    pkcs12:
+      create: true
+      profile: LegacyDES
+      passwordSecretRef:
+        name: clearpass-p12-password
+        key: password

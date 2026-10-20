@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - step-ca-values.sops.yaml
+  - clearpass-issuers.yaml
