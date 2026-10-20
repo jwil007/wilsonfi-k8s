@@ -4,3 +4,4 @@ resources:
   - deployment.yaml
   - step-ca-values.sops.yaml
   - clearpass-issuers.yaml
+  - clearpass-p12-password.sops.yaml
