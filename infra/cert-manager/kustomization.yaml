@@ -5,3 +5,4 @@ resources:
   - cert-manager.yaml
   - clusterissuer-prod.yaml
   - clusterissuer-staging.yaml
+  - step-ca-acme-clusterissuer.yaml
