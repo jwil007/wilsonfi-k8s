@@ -11,6 +11,7 @@ spec:
   dnsNames:
     - clearpass.wilsonfi.dev
     - cppm01.wilsonfi.dev
+    - cppm01-sub.wilsonfi.dev
   privateKey:
     algorithm: RSA
     size: 2048
