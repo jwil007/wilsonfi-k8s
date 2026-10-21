@@ -32,8 +32,6 @@ metadata:
 spec:
   secretName: clearpass-radius-tls
   commonName: radius.wilsonfi.dev
-  dnsNames:
-    - radius.wilsonfi.dev
   issuerRef:
     kind: ClusterIssuer
     name: step-ca-acme
@@ -51,3 +49,4 @@ spec:
       passwordSecretRef:
         name: clearpass-p12-password
         key: password
+
