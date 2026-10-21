@@ -64,6 +64,23 @@ spec:
       enabled: true
       size: 5Gi   # uploaded media (device images, attachments)
 
+    # netbox-media is RWO and mounted by both netbox and the worker. RollingUpdate
+    # deadlocks when the new pod lands on another node (Multi-Attach, held by the
+    # old pod), so stop old pods first and pin the worker to netbox's node.
+    updateStrategy:
+      type: Recreate
+    worker:
+      updateStrategy:
+        type: Recreate
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/instance: netbox
+                  app.kubernetes.io/component: netbox
+
     # Applies to the bundled postgres too. Granian's worker threads each keep a
     # persistent connection that's never reaped, exhausting max_connections (100);
     # 0 = close after each request.
