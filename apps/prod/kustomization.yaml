@@ -10,4 +10,5 @@ resources:
   - technitium
   - netbox
   - semaphore
+  - pki-portal
   # Add app manifests here as you deploy them

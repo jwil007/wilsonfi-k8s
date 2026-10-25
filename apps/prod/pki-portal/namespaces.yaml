@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pki-portal
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+---
+# Holds the portal's Certificates and key Secrets. Those objects are created by
+# the portal, not Git, so Flux never prunes them; the annotation stops Flux from
+# deleting the namespace itself (and every key in it) if this file is removed.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pki-managed
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
