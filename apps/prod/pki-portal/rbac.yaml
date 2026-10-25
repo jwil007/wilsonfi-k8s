@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pki-portal
+  namespace: pki-portal
+---
+# Everything the portal issues lives in pki-managed.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pki-portal
+  namespace: pki-managed
+rules:
+  - apiGroups: ["cert-manager.io"]
+    resources: ["certificates", "certificaterequests"]
+    verbs: ["create", "get", "list", "watch", "update", "delete"]
+  - apiGroups: ["cert-manager.io"]
+    resources: ["certificates/status"] # "Renew now" sets the Issuing condition
+    verbs: ["update"]
+  - apiGroups: ["acme.cert-manager.io"]
+    resources: ["orders", "challenges"] # issuance progress
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["create", "get", "list", "watch", "update", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pki-portal
+  namespace: pki-managed
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pki-portal
+subjects:
+  - kind: ServiceAccount
+    name: pki-portal
+    namespace: pki-portal
+---
+# step-ca's root + intermediate (CA page, TLS trust for step-ca).
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pki-portal-ca-certs
+  namespace: pki
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["step-certificates-certs"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pki-portal-ca-certs
+  namespace: pki
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pki-portal-ca-certs
+subjects:
+  - kind: ServiceAccount
+    name: pki-portal
+    namespace: pki-portal
+---
+# Issuer health on the dashboard.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pki-portal-issuers
+rules:
+  - apiGroups: ["cert-manager.io"]
+    resources: ["clusterissuers"]
+    resourceNames: ["letsencrypt-prod", "letsencrypt-staging"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: pki-portal-issuers
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: pki-portal-issuers
+subjects:
+  - kind: ServiceAccount
+    name: pki-portal
+    namespace: pki-portal

@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pki-portal
+  namespace: pki-portal
+data:
+  PORTAL_BASE_URL: https://pki.wilsonfi.dev
+  PORTAL_NAMESPACE: pki-managed
+  PORTAL_PUBLIC_ISSUER: letsencrypt-prod
+  PORTAL_DOMAINS: wilsonfi.dev,wilsonfi.com
+  PORTAL_PUBLIC_DOMAINS: wilsonfi.dev
+  PORTAL_IP_RANGES: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+  PORTAL_STEPCA_URL: https://step-certificates.pki.svc.cluster.local
+  PORTAL_STEPCA_PROVISIONER: pki-portal
+  PORTAL_CA_CONFIGMAP: pki/step-certificates-certs
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pki-portal-data
+  namespace: pki-portal
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pki-portal
+  namespace: pki-portal
+  labels:
+    app: pki-portal
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate # RWO volume + SQLite: never two pods at once
+  selector:
+    matchLabels:
+      app: pki-portal
+  template:
+    metadata:
+      labels:
+        app: pki-portal
+    spec:
+      serviceAccountName: pki-portal
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: pki-portal
+          image: ghcr.io/jwil007/pki-portal:0.1.0
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: pki-portal
+            - secretRef:
+                name: pki-portal
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 20m
+              memory: 64Mi
+            limits:
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: pki-portal-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pki-portal
+  namespace: pki-portal
+spec:
+  selector:
+    app: pki-portal
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http

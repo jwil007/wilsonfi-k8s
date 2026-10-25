@@ -1,0 +1,29 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: pki-portal-tls
+  namespace: pki-portal
+spec:
+  secretName: pki-portal-tls-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - pki.wilsonfi.dev
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: pki-portal
+  namespace: pki-portal
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`pki.wilsonfi.dev`)
+      kind: Rule
+      services:
+        - name: pki-portal
+          port: 8080
+  tls:
+    secretName: pki-portal-tls-secret
