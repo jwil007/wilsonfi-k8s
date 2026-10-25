@@ -38,7 +38,8 @@ subjects:
     name: pki-portal
     namespace: pki-portal
 ---
-# step-ca's root + intermediate (CA page, TLS trust for step-ca).
+# Read-only access in pki: step-ca's root + intermediate, and the Git-managed
+# ClearPass certs for the GitOps view (Secrets by name only).
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -48,6 +49,13 @@ rules:
   - apiGroups: [""]
     resources: ["configmaps"]
     resourceNames: ["step-certificates-certs"]
+    verbs: ["get"]
+  - apiGroups: ["cert-manager.io"]
+    resources: ["certificates"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: ["clearpass-https-tls", "clearpass-radius-tls", "clearpass-p12-password"]
     verbs: ["get"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1

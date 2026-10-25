@@ -12,6 +12,9 @@ data:
   PORTAL_IP_RANGES: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
   PORTAL_STEPCA_URL: https://step-certificates.pki.svc.cluster.local
   PORTAL_STEPCA_PROVISIONER: pki-portal
+  PORTAL_STEPCA_CLIENT_PROVISIONER: pki-portal-clients
+  PORTAL_CLIENT_EMAIL_DOMAIN: ad.wilsonfi.dev
+  PORTAL_GITOPS_NAMESPACE: pki
   PORTAL_CA_CONFIGMAP: pki/step-certificates-certs
   PORTAL_SEMAPHORE_URL: https://semaphore.wilsonfi.dev
   # Secrets are read from mounted files; the password is re-read on every
@@ -62,7 +65,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: pki-portal
-          image: ghcr.io/jwil007/pki-portal:0.2.0
+          image: ghcr.io/jwil007/pki-portal:0.3.0
           ports:
             - name: http
               containerPort: 8080
