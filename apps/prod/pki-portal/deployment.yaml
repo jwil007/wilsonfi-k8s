@@ -13,6 +13,13 @@ data:
   PORTAL_STEPCA_URL: https://step-certificates.pki.svc.cluster.local
   PORTAL_STEPCA_PROVISIONER: pki-portal
   PORTAL_CA_CONFIGMAP: pki/step-certificates-certs
+  PORTAL_SEMAPHORE_URL: https://semaphore.wilsonfi.dev
+  # Secrets are read from mounted files; the password is re-read on every
+  # login, so rotating it in secret.yaml needs no restart.
+  PORTAL_PASSWORD_FILE: /etc/pki-portal/secrets/PORTAL_PASSWORD
+  PORTAL_STEPCA_PASSWORD_FILE: /etc/pki-portal/secrets/PORTAL_STEPCA_PASSWORD
+  PORTAL_SEMAPHORE_TOKEN_FILE: /etc/pki-portal/secrets/PORTAL_SEMAPHORE_TOKEN
+  PORTAL_NTFY_URL_FILE: /etc/pki-portal/secrets/PORTAL_NTFY_URL
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -55,14 +62,14 @@ spec:
           type: RuntimeDefault
       containers:
         - name: pki-portal
-          image: ghcr.io/jwil007/pki-portal:0.1.0
+          image: ghcr.io/jwil007/pki-portal:0.2.0
           ports:
             - name: http
               containerPort: 8080
+            - name: metrics
+              containerPort: 9090
           envFrom:
             - configMapRef:
-                name: pki-portal
-            - secretRef:
                 name: pki-portal
           readinessProbe:
             httpGet:
@@ -87,16 +94,24 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
+            - name: secrets
+              mountPath: /etc/pki-portal/secrets
+              readOnly: true
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: pki-portal-data
+        - name: secrets
+          secret:
+            secretName: pki-portal
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: pki-portal
   namespace: pki-portal
+  labels:
+    app: pki-portal
 spec:
   selector:
     app: pki-portal
@@ -104,3 +119,6 @@ spec:
     - name: http
       port: 8080
       targetPort: http
+    - name: metrics
+      port: 9090
+      targetPort: metrics

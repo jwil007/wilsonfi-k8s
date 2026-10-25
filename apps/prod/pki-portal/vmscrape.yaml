@@ -1,0 +1,13 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMServiceScrape
+metadata:
+  name: pki-portal
+  namespace: pki-portal
+spec:
+  selector:
+    matchLabels:
+      app: pki-portal
+  endpoints:
+  - port: metrics
+    interval: 60s
+    path: /metrics
