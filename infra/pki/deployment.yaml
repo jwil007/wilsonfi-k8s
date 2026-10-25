@@ -31,6 +31,16 @@ spec:
       name: step-ca-values
       valuesKey: values.yaml
   values:
+    # Chart default args plus --resolver: step-ca validates DNS-01 against
+    # 1.1.1.1 instead of cluster DNS, whose Technitium resolvers cache the
+    # NXDOMAIN from cert-manager's pre-check for 30 min (Cloudflare SOA minimum).
+    # Overriding args replaces the chart's list, so re-check on chart upgrades.
+    args:
+      - --password-file
+      - /home/step/secrets/passwords/password
+      - --resolver
+      - 1.1.1.1:53
+      - /home/step/config/ca.json
     service:
       type: LoadBalancer
       port: 443
